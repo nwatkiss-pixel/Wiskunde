@@ -1,0 +1,2525 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Die Geheim van Baviaaneiland — Wiskunde Graad 6</title>
+<style>
+/* ============================================================
+   DIE GEHEIM VAN BAVIAANEILAND / THE SECRET OF BABOON ISLAND
+   Graad 6 Wiskunde — Sistemiese voorbereiding
+   Enkellêer-speletjie. Geen internet nodig.
+   ============================================================ */
+
+:root{
+  --sea-deep:#071f2c;
+  --sea:#0e3a4d;
+  --sea-light:#17566b;
+  --timber:#3a2415;
+  --plank:#6b4526;
+  --plank-light:#8a5c34;
+  --parchment:#efdfbb;
+  --parchment-dark:#d8c294;
+  --ink:#2b1a0d;
+  --brass:#e0a828;
+  --brass-dark:#a87a16;
+  --foam:#3fb8a0;
+  --coral:#d2553c;
+  --moon:#f4ecd8;
+  --shadow:rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{max-width:100%;overflow-x:hidden}
+
+html,body{margin:0;padding:0;min-height:100%}
+
+body{
+  background:var(--sea-deep);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, #14455c 0%, #071f2c 65%);
+  color:var(--moon);
+  font-family:"Trebuchet MS","Segoe UI",Verdana,sans-serif;
+  font-size:17px;
+  line-height:1.5;
+  padding:10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));
+  overflow-x:hidden;
+  -webkit-text-size-adjust:100%;
+  display:flex;
+  justify-content:center;
+}
+
+.stage{width:100%;max-width:960px}
+
+/* ---------- top bar ---------- */
+.topbar{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  background:linear-gradient(180deg,var(--plank-light),var(--plank));
+  border:3px solid var(--timber);
+  border-radius:8px;
+  padding:8px 10px;
+  margin-bottom:10px;
+  box-shadow:0 4px 0 var(--timber);
+}
+.brandmark{font-family:Georgia,"Palatino Linotype",serif;font-weight:bold;font-size:18px;color:var(--parchment);letter-spacing:.5px;margin-right:auto}
+.brandmark span{display:block;font-size:12px;font-weight:normal;color:var(--parchment-dark);letter-spacing:2px}
+
+.stat{
+  background:var(--timber);border:2px solid #21140a;border-radius:6px;
+  padding:5px 9px;font-size:15px;font-weight:bold;color:var(--parchment);
+  min-height:34px;display:flex;align-items:center;gap:5px;white-space:nowrap
+}
+
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+.btn,.opt,.island,.badge,.shop-item button{
+  touch-action:manipulation;              /* removes the 300 ms tap delay */
+  -webkit-user-select:none;user-select:none;
+  min-height:44px;min-width:44px
+}
+
+.btn{
+  background:linear-gradient(180deg,var(--brass),var(--brass-dark));
+  color:var(--ink);border:2px solid #6d4c08;border-radius:8px;
+  font-weight:bold;padding:11px 16px;min-height:44px;
+  box-shadow:0 3px 0 #6d4c08;
+  transition:transform .08s ease
+}
+.btn:active,.btn.pressed{transform:translateY(3px);box-shadow:0 0 0 #6d4c08;filter:brightness(1.08)}
+.btn.quiet{background:linear-gradient(180deg,var(--plank-light),var(--plank));color:var(--parchment);border-color:var(--timber);box-shadow:0 3px 0 var(--timber)}
+.btn.small{padding:8px 12px;font-size:15px;min-height:44px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.opt:focus-visible,.island:focus-visible{outline:3px solid var(--foam);outline-offset:3px}
+
+/* ---------- panels ---------- */
+.screen{display:none}
+.screen.on{display:block}
+
+.panel{
+  background:linear-gradient(180deg,#0f3d51,#0a2c3c);
+  border:3px solid var(--timber);border-radius:10px;
+  padding:16px;margin-bottom:10px;
+  box-shadow:0 5px 0 var(--timber)
+}
+
+.scene{
+  position:relative;border:3px solid var(--timber);border-radius:10px;
+  overflow:hidden;background:var(--sea);box-shadow:0 5px 0 var(--timber)
+}
+.scene svg{display:block;width:100%;height:auto}
+
+/* ---------- dialogue bar (SCUMM-style) ---------- */
+.dialogue{
+  background:var(--parchment);
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.025) 0 2px,transparent 2px 5px);
+  color:var(--ink);
+  border:3px solid var(--timber);border-top:none;
+  border-radius:0 0 10px 10px;
+  padding:14px 16px;
+  font-family:Georgia,"Palatino Linotype",serif;
+  font-size:17px;line-height:1.55;
+  min-height:76px;
+  box-shadow:0 5px 0 var(--timber);
+  margin-bottom:14px
+}
+.dialogue .who{display:block;font-family:"Trebuchet MS",sans-serif;font-size:13px;font-weight:bold;letter-spacing:1px;color:#7a4a1c;margin-bottom:3px}
+.scene + .dialogue{border-radius:0 0 10px 10px;margin-top:-3px}
+
+/* ---------- title screen ---------- */
+.title-wrap{text-align:center;padding:14px 8px 4px}
+.title-main{
+  font-family:Georgia,"Palatino Linotype",serif;
+  font-size:clamp(30px,7.5vw,58px);line-height:1.05;
+  color:var(--brass);margin:0;
+  text-shadow:0 3px 0 #6d4c08, 0 6px 14px rgba(0,0,0,.6)
+}
+.title-sub{font-size:clamp(14px,3vw,19px);color:var(--parchment-dark);margin:10px 0 0;letter-spacing:1px}
+
+.field{display:block;margin:16px auto 6px;max-width:340px;text-align:left;font-size:15px;color:var(--parchment-dark)}
+input[type=text]{
+  width:100%;max-width:340px;padding:12px;font-size:18px;font-family:inherit;
+  border:3px solid var(--timber);border-radius:8px;background:var(--parchment);color:var(--ink)
+}
+
+/* ---------- map ---------- */
+.map-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.island{
+  text-align:left;background:linear-gradient(180deg,#155168,#0c374a);
+  border:3px solid var(--timber);border-radius:10px;padding:12px;
+  color:var(--moon);box-shadow:0 4px 0 var(--timber);
+  display:flex;gap:10px;align-items:flex-start;min-height:92px
+}
+.island:active,.island.pressed{transform:translateY(3px);box-shadow:0 1px 0 var(--timber);border-color:var(--brass)}
+.island.locked{opacity:.55;cursor:not-allowed;filter:grayscale(.5)}
+.island.done{border-color:var(--brass)}
+.island-icon{width:52px;height:52px;flex:0 0 52px}
+.island h3{margin:0 0 3px;font-size:17px;font-family:Georgia,serif;color:var(--parchment)}
+.island p{margin:0;font-size:13px;color:#a9c9d4}
+.stars{font-size:15px;color:var(--brass);letter-spacing:2px;margin-top:4px}
+
+/* ---------- question ---------- */
+.qcard{background:var(--parchment);color:var(--ink);border:3px solid var(--timber);border-radius:10px;padding:16px;box-shadow:0 5px 0 var(--timber)}
+.qmeta{font-size:13px;font-weight:bold;letter-spacing:1px;color:#7a4a1c;margin-bottom:6px}
+.qtext{font-size:20px;line-height:1.45;font-family:Georgia,"Palatino Linotype",serif;margin:0 0 12px}
+.qfig{text-align:center;margin:0 0 14px}
+.qfig svg{max-width:100%;height:auto}
+
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.opt{
+  display:flex;align-items:center;gap:10px;text-align:left;
+  background:#fffaf0;border:3px solid var(--plank);border-radius:8px;
+  padding:12px;min-height:56px;font-size:18px;color:var(--ink);
+  font-family:inherit;box-shadow:0 3px 0 var(--plank)
+}
+.opt:active,.opt.pressed{transform:translateY(3px);box-shadow:0 0 0 var(--plank);background:#f6ead2}
+.opt.pressed .letter{background:var(--brass-dark)}
+.opt .letter{
+  flex:0 0 32px;height:32px;border-radius:50%;background:var(--plank);color:var(--parchment);
+  display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px
+}
+.opt.right{background:#d8f2e9;border-color:var(--foam);box-shadow:0 3px 0 var(--foam)}
+.opt.right .letter{background:var(--foam)}
+.opt.wrong{background:#f6dcd6;border-color:var(--coral);box-shadow:0 3px 0 var(--coral)}
+.opt.wrong .letter{background:var(--coral)}
+.opt[disabled]{cursor:default}
+.opt.pick{justify-content:center;min-height:62px}
+.opt.pick .letter{flex:0 0 46px;width:46px;height:46px;font-size:22px}
+
+.qbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.qbar .spacer{margin-left:auto}
+
+/* ---------- feedback ---------- */
+.verdict{margin-top:14px;border-radius:8px;padding:12px 14px;border:3px solid;font-size:17px}
+.verdict.good{background:#d8f2e9;border-color:var(--foam);color:#0d4f42}
+.verdict.bad{background:#f6dcd6;border-color:var(--coral);color:#6d2114}
+.verdict.hint{background:#fdf0cf;border-color:var(--brass-dark);color:#5a3f06}
+.verdict .vhead{font-weight:bold;display:block;margin-bottom:3px}
+
+/* ---------- duel ---------- */
+.duel-bars{display:flex;gap:12px;margin-bottom:10px}
+.hpwrap{flex:1}
+.hpwrap span{font-size:13px;font-weight:bold;letter-spacing:1px}
+.hp{height:16px;border:2px solid var(--timber);border-radius:8px;background:#062230;overflow:hidden}
+.hp i{display:block;height:100%;background:var(--foam);transition:width .3s}
+.hp.foe i{background:var(--coral)}
+
+/* ---------- shop / cabin ---------- */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.shop-item{background:#0c374a;border:3px solid var(--timber);border-radius:10px;padding:10px;text-align:center}
+.shop-item svg{width:64px;height:64px}
+.shop-item h4{margin:4px 0;font-size:15px;color:var(--parchment)}
+.owned{color:var(--foam);font-weight:bold;font-size:14px}
+
+/* ---------- teacher ---------- */
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{border:2px solid var(--timber);padding:7px 9px;text-align:left}
+th{background:var(--plank);color:var(--parchment)}
+td{background:#0c374a}
+.qlist{max-height:340px;overflow:auto;border:3px solid var(--timber);border-radius:8px;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  border-radius:8px;padding-bottom:2px}
+.qfig{max-width:100%}
+.qfig svg{max-width:100%;height:auto}
+.qlist table{font-size:13px}
+
+/* ---------- certificate ---------- */
+.cert{background:var(--parchment);color:var(--ink);border:10px double var(--brass-dark);border-radius:6px;padding:26px;text-align:center}
+.cert h2{font-family:Georgia,serif;font-size:30px;margin:0 0 4px;color:#6d4c08}
+.cert .name{font-family:Georgia,serif;font-size:27px;margin:14px 0;border-bottom:3px solid var(--plank);display:inline-block;padding:0 22px 4px}
+.cert table{max-width:430px;margin:16px auto;font-size:15px}
+.cert td,.cert th{border-color:var(--plank);background:#f8f1de;color:var(--ink)}
+.cert th{background:var(--parchment-dark);color:var(--ink)}
+
+/* stacked fractions */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.08;margin:0 3px;font-size:.82em}
+.fr i{font-style:normal;border-bottom:2px solid currentColor;padding:0 5px}
+.fr b{padding:0 5px}
+
+h2.head{font-family:Georgia,serif;color:var(--brass);margin:0 0 10px;font-size:25px}
+h3.sub{font-family:Georgia,serif;color:var(--parchment);margin:18px 0 8px;font-size:19px}
+.note{font-size:14px;color:#a9c9d4}
+
+.toast{
+  position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);
+  background:var(--brass);color:var(--ink);font-weight:bold;
+  border:3px solid var(--brass-dark);border-radius:8px;padding:10px 18px;
+  box-shadow:0 4px 12px rgba(0,0,0,.5);z-index:50;max-width:92vw;text-align:center
+}
+
+
+/* ---------- intro sequence ---------- */
+#scr-intro{position:relative}
+.intro{
+  position:relative;overflow:hidden;min-height:clamp(380px,72vh,620px);
+  border:3px solid var(--timber);border-radius:10px;box-shadow:0 5px 0 var(--timber);
+  background:radial-gradient(ellipse at 50% 20%,#14455c 0%,#061c28 70%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:30px 20px
+}
+.intro .sym{
+  position:absolute;color:#7fd4c4;opacity:0;font-family:Georgia,serif;
+  font-size:26px;pointer-events:none;user-select:none;
+  animation:drift 9s linear infinite
+}
+@keyframes drift{
+  0%{opacity:0;transform:translateY(24px) rotate(0deg)}
+  18%{opacity:.34}
+  82%{opacity:.34}
+  100%{opacity:0;transform:translateY(-120px) rotate(12deg)}
+}
+.intro-grid{position:absolute;inset:0;opacity:.12;
+  background-image:linear-gradient(#9fd8d0 1px,transparent 1px),linear-gradient(90deg,#9fd8d0 1px,transparent 1px);
+  background-size:44px 44px}
+.intro-inner{position:relative;z-index:2;max-width:640px}
+.beat{opacity:0;animation:riseIn .85s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes riseIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.beat.out{animation:fadeOut .7s ease forwards}
+@keyframes fadeOut{to{opacity:0;transform:translateY(-10px)}}
+.intro-eyebrow{font-size:15px;letter-spacing:3px;color:var(--parchment-dark);margin:0 0 20px}
+.intro-name{font-family:Georgia,"Palatino Linotype",serif;font-size:clamp(25px,5.4vw,38px);
+  color:var(--brass);margin:0;line-height:1.15;text-shadow:0 2px 0 #6d4c08}
+.intro-role{font-size:16px;color:var(--parchment);margin:4px 0 26px;letter-spacing:.4px}
+.intro-ded{font-family:Georgia,serif;font-size:clamp(16px,2.8vw,20px);color:var(--parchment);
+  line-height:1.6;max-width:30em;margin:0 auto}
+.intro-rule{width:120px;height:3px;background:var(--brass);margin:22px auto;border-radius:2px;opacity:.8}
+.intro-skip{position:absolute;right:14px;bottom:14px;z-index:3}
+.intro-dots{position:absolute;left:0;right:0;bottom:18px;z-index:3;display:flex;gap:7px;justify-content:center}
+.intro-dots i{width:9px;height:9px;border-radius:50%;background:var(--parchment-dark);opacity:.35;display:block}
+.intro-dots i.on{opacity:1;background:var(--brass)}
+.fading{animation:fadeOut .6s ease forwards}
+
+/* ---------- modal (teacher password) ---------- */
+.modal-back{position:fixed;inset:0;background:rgba(4,16,24,.82);z-index:80;
+  display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:linear-gradient(180deg,#0f3d51,#0a2c3c);border:3px solid var(--timber);
+  border-radius:10px;box-shadow:0 6px 0 var(--timber);padding:20px;max-width:390px;width:100%}
+.modal h3{font-family:Georgia,serif;color:var(--brass);margin:0 0 6px;font-size:21px}
+.modal p{font-size:15px;color:#bcd6de;margin:0 0 14px}
+.modal input{letter-spacing:8px;text-align:center;font-size:24px}
+.modal .err{color:#ffb4a2;font-size:15px;font-weight:bold;min-height:22px;margin:8px 0 0}
+
+/* ---------- badges ---------- */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.badge{background:#0c374a;border:3px solid var(--timber);border-radius:10px;padding:10px 8px;text-align:center}
+.badge.got{border-color:var(--brass);background:#12455c}
+.badge .bi{font-size:28px;line-height:1.1}
+.badge .bn{font-size:13px;color:var(--parchment);margin-top:4px}
+.badge.locked{opacity:.42;filter:grayscale(1)}
+.bar{height:14px;border:2px solid var(--timber);border-radius:7px;background:#062230;overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;background:var(--brass)}
+.toggle[aria-pressed="true"]{background:linear-gradient(180deg,var(--foam),#2a8a78);color:#052a24;border-color:#1c6558;box-shadow:0 3px 0 #1c6558}
+
+/* ============================================================
+   TOUCH AND SMALL-SCREEN LAYOUT
+   Phones in portrait, tablets, and phones turned sideways.
+   ============================================================ */
+@media (max-width:760px){
+  .map-grid{grid-template-columns:1fr}
+  .qbar .btn{flex:1 1 auto}
+  .qbar{gap:10px}
+}
+
+@media (max-width:560px){
+  body{font-size:16px;padding:6px calc(6px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(6px + env(safe-area-inset-left))}
+
+  /* top bar: name on its own line, controls in a comfortable row */
+  .topbar{padding:7px 8px;gap:6px}
+  .brandmark{font-size:17px;flex:1 0 100%;margin-right:0}
+  .brandmark span{font-size:12px;letter-spacing:1.5px}
+  .stat{font-size:16px;padding:6px 10px;min-height:44px}
+  .topbar .btn.small{padding:8px 12px;min-width:48px}
+
+  /* panels and cards breathe less, so more of the question fits */
+  .panel,.qcard{padding:13px}
+  .scene svg{height:40vw;min-height:104px;max-height:210px}
+
+  /* SCUMM dialogue bar */
+  .dialogue{padding:12px 13px;font-size:16.5px;min-height:0;line-height:1.5}
+  .dialogue .who{font-size:12.5px}
+
+  /* questions */
+  .qmeta{font-size:12.5px}
+  .qtext{font-size:clamp(18px,4.8vw,21px);line-height:1.4}
+  .qfig{margin-bottom:12px}
+  .opts{grid-template-columns:1fr;gap:9px}
+  .opt{font-size:18px;min-height:62px;padding:13px}
+  .opt .letter{flex:0 0 36px;height:36px;font-size:17px}
+  .opt.pick{min-height:66px}
+  .opt.pick .letter{flex:0 0 50px;width:50px;height:50px;font-size:24px}
+  .verdict{font-size:16.5px;padding:11px 12px}
+
+  /* map, cabin, awards */
+  .island{padding:11px;min-height:96px}
+  .island h3{font-size:17.5px}
+  .island p{font-size:13.5px}
+  .shop-grid{grid-template-columns:repeat(auto-fit,minmax(132px,1fr))}
+  .badges{grid-template-columns:repeat(auto-fill,minmax(102px,1fr))}
+
+  /* tables stay readable and scroll sideways instead of squashing */
+  table{font-size:14.5px}
+  th,td{padding:6px 7px}
+  .qlist{max-height:52vh}
+  .qlist table{font-size:13px;min-width:620px}
+
+  /* certificate and modal */
+  .cert{padding:18px 14px;border-width:7px}
+  .cert h2{font-size:24px}
+  .cert .name{font-size:23px;padding:0 12px 4px}
+  .modal{padding:16px}
+  .modal input{font-size:22px;letter-spacing:6px}
+
+  /* intro */
+  .intro{min-height:clamp(340px,64vh,520px);padding:24px 16px}
+  .intro-eyebrow{font-size:13.5px;letter-spacing:2px;margin-bottom:16px}
+  .intro-role{font-size:15px;margin-bottom:18px}
+  .intro-skip{right:10px;bottom:10px}
+}
+
+@media (max-width:380px){
+  .qtext{font-size:18px}
+  .opt{font-size:17px;padding:12px}
+  .stat{font-size:15px;padding:5px 8px}
+  .island h3{font-size:16.5px}
+  .btn{padding:11px 13px}
+}
+
+/* phone held sideways: keep the scene from eating the screen */
+@media (max-height:520px) and (orientation:landscape){
+  .scene svg{height:30vh;min-height:90px}
+  .intro{min-height:auto;padding:18px 16px}
+  .dialogue{min-height:0;padding:10px 12px}
+  .opts{grid-template-columns:1fr 1fr}
+}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  body{background:#fff;color:#000}
+  .topbar,.btn,.noprint{display:none!important}
+  .cert{border-color:#000}
+}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ===================== TOP BAR ===================== -->
+  <div class="topbar" id="topbar" style="display:none">
+    <div class="brandmark">Baviaaneiland<span id="tb-player">—</span></div>
+    <div class="stat" id="tb-coins">🪙 <b>0</b></div>
+    <div class="stat" id="tb-lives">💀💀💀</div>
+    <div class="stat" id="tb-streak">🔥 <b>0</b></div>
+    <button class="btn small quiet" id="btn-lang" onclick="toggleLang()">EN</button>
+    <button class="btn small quiet" id="btn-sound" onclick="toggleSound()">🔇</button>
+    <button class="btn small quiet" id="btn-map" onclick="goMap()">🗺️</button>
+  </div>
+
+  <!-- ===================== INTRO ===================== -->
+  <div class="screen on" id="scr-intro">
+    <div class="intro" id="intro-box">
+      <div class="intro-grid" aria-hidden="true"></div>
+      <div id="intro-syms" aria-hidden="true"></div>
+      <div class="intro-inner" id="intro-inner" role="region" aria-label="Credits"></div>
+      <div class="intro-dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+      <button class="btn quiet small intro-skip" id="btn-skip" onclick="skipIntro()">Skip intro · ESC</button>
+    </div>
+  </div>
+
+  <!-- ===================== TITLE ===================== -->
+  <div class="screen" id="scr-title">
+    <div class="scene" id="title-scene" aria-hidden="true"></div>
+    <div class="panel title-wrap">
+      <h1 class="title-main" id="t-main">Die Geheim van Baviaaneiland</h1>
+      <p class="title-sub" id="t-sub">'n Wiskunde-avontuur vir Graad 6</p>
+      <label class="field" for="nameIn" id="t-namelabel">Wat is jou seerowersnaam?</label>
+      <input type="text" id="nameIn" maxlength="18" placeholder="…">
+      <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn" onclick="startGame()" id="t-start">Begin die avontuur</button>
+        <button class="btn quiet" onclick="toggleLang()" id="t-lang">English</button>
+      </div>
+      <p class="note" style="margin-top:14px" id="t-foot">75 vrae · CAPS Graad 6 · Afrikaans &amp; English</p>
+    </div>
+  </div>
+
+  <!-- ===================== MAP ===================== -->
+  <div class="screen" id="scr-map">
+    <div class="scene" id="map-scene" aria-hidden="true"></div>
+    <div class="dialogue" id="map-talk"></div>
+    <div class="panel">
+      <h2 class="head" id="m-head">Die kaart</h2>
+      <div class="map-grid" id="map-grid"></div>
+      <div class="qbar" style="margin-top:14px">
+        <button class="btn quiet small" onclick="showCabin()" id="m-cabin">Jou kajuit</button>
+        <button class="btn quiet small" onclick="showTeacher()" id="m-teacher">Vir die Opvoeder 🔒</button>
+        <button class="btn quiet small" onclick="showCert()" id="m-cert">Sertifikaat</button>
+        <button class="btn quiet small" onclick="showSettings()" id="m-set">Instellings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CHAPTER ===================== -->
+  <div class="screen" id="scr-chapter">
+    <div class="scene" id="ch-scene" aria-hidden="true"></div>
+    <div class="dialogue" id="ch-talk"></div>
+    <div class="panel" id="ch-panel"></div>
+  </div>
+
+  <!-- ===================== QUESTION ===================== -->
+  <div class="screen" id="scr-q">
+    <div id="duel-ui" style="display:none">
+      <div class="panel" style="padding:12px">
+        <div class="duel-bars">
+          <div class="hpwrap"><span id="hp-you-lbl">Jy</span><div class="hp"><i id="hp-you" style="width:100%"></i></div></div>
+          <div class="hpwrap"><span id="hp-foe-lbl">Kaptein Skurwebaard</span><div class="hp foe"><i id="hp-foe" style="width:100%"></i></div></div>
+        </div>
+        <div id="duel-taunt" style="font-family:Georgia,serif;font-size:16px;color:var(--parchment)"></div>
+      </div>
+    </div>
+    <div class="qcard">
+      <div class="qmeta" id="q-meta"></div>
+      <p class="qtext" id="q-text" aria-live="polite"></p>
+      <div class="qfig" id="q-fig"></div>
+      <div class="opts" id="q-opts" role="group" aria-label="Answer options"></div>
+      <div id="q-verdict" role="status" aria-live="polite"></div>
+      <div class="qbar">
+        <button class="btn quiet small" id="q-hint" onclick="askHint()">Wenk</button>
+        <button class="btn quiet small" id="q-show" onclick="showMethod()">Wys my hoe</button>
+        <span class="spacer"></span>
+        <button class="btn" id="q-next" onclick="nextQuestion()" style="display:none">Volgende</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== GENERIC PANEL SCREEN ===================== -->
+  <div class="screen" id="scr-info"><div class="panel" id="info-body"></div></div>
+
+</div>
+<div id="modal-host"></div>
+<script>
+/* ============================================================
+   SECTION: SVG ASSETS
+   Every figure is drawn inline. Nothing is loaded from the web.
+   ============================================================ */
+const INK = "#2b1a0d", PLANK = "#6b4526", BRASS = "#a87a16", SHADE = "#9db9c4", SEA = "#17566b";
+
+function svg(w, h, body, extra) {
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" ${extra || ""}
+    xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto">${body}</svg>`;
+}
+
+/* square grid; shaded = array of "row,col" (0-based) */
+function gGrid(cols, rows, shaded, cell) {
+  cell = cell || 26; shaded = shaded || [];
+  let b = "";
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const on = shaded.indexOf(r + "," + c) > -1;
+    b += `<rect x="${c * cell + 2}" y="${r * cell + 2}" width="${cell}" height="${cell}"
+      fill="${on ? SHADE : "#fffdf7"}" stroke="${INK}" stroke-width="1.5"/>`;
+  }
+  return svg(cols * cell + 4, rows * cell + 4, b);
+}
+
+/* flow diagram: boxes = array of rule labels */
+function gFlow(inputs, rules, outputs) {
+  const rowH = 34, n = Math.max(inputs.length, outputs.length), h = n * rowH + 30;
+  const midY = h / 2, bw = 74, bh = 44;
+  let b = "";
+  const boxes = rules.length;
+  const bx = i => 110 + i * 118;
+  inputs.forEach((v, i) => {
+    const y = 15 + i * rowH;
+    b += `<rect x="6" y="${y}" width="76" height="26" fill="#fffdf7" stroke="${INK}" stroke-width="2" rx="3"/>
+          <text x="44" y="${y + 18}" font-size="16" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${v}</text>
+          <line x1="82" y1="${y + 13}" x2="${bx(0)}" y2="${midY}" stroke="${INK}" stroke-width="1.5"/>`;
+  });
+  rules.forEach((r, i) => {
+    b += `<rect x="${bx(i)}" y="${midY - bh / 2}" width="${bw}" height="${bh}" fill="${BRASS}" stroke="${INK}" stroke-width="2" rx="4"/>
+          <text x="${bx(i) + bw / 2}" y="${midY + 6}" font-size="17" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif" font-weight="bold">${r}</text>`;
+    if (i < rules.length - 1) b += `<line x1="${bx(i) + bw}" y1="${midY}" x2="${bx(i + 1)}" y2="${midY}" stroke="${INK}" stroke-width="2"/>`;
+  });
+  const endX = bx(boxes - 1) + bw;
+  outputs.forEach((v, i) => {
+    const y = 15 + i * rowH;
+    b += `<line x1="${endX}" y1="${midY}" x2="${endX + 28}" y2="${y + 13}" stroke="${INK}" stroke-width="1.5"/>
+          <rect x="${endX + 28}" y="${y}" width="76" height="26" fill="#fffdf7" stroke="${INK}" stroke-width="2" rx="3"/>
+          <text x="${endX + 66}" y="${y + 18}" font-size="16" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${v}</text>`;
+  });
+  return svg(endX + 110, h, b);
+}
+
+/* grouped bar graph: cats = [{l, a, b}]  a = solid (girls), b = hatched (boys) */
+function gBar(cats, max, step, yTitle, legA, legB) {
+  const W = 420, H = 256, x0 = 78, y0 = 198, top = 36, bw = 22, gap = 8, grp = 26;
+  let b = `<defs><pattern id="hh" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#fffdf7"/><line x1="0" y1="0" x2="0" y2="6" stroke="${INK}" stroke-width="2.2"/></pattern></defs>
+    <rect x="0" y="0" width="${W}" height="${H}" fill="#fffdf7"/>`;
+  const sc = v => (v / max) * (y0 - top);
+  for (let v = 0; v <= max; v += step) {
+    const y = y0 - sc(v);
+    b += `<line x1="${x0}" y1="${y}" x2="${W - 12}" y2="${y}" stroke="#cfc8b8" stroke-width="1"/>
+      <text x="${x0 - 6}" y="${y + 4}" font-size="12" text-anchor="end" fill="${INK}" font-family="Verdana,sans-serif">${String(v).replace(/\B(?=(\d{3})+(?!\d))/g, " ")}</text>`;
+  }
+  b += `<line x1="${x0}" y1="${top - 6}" x2="${x0}" y2="${y0}" stroke="${INK}" stroke-width="2"/>
+    <line x1="${x0}" y1="${y0}" x2="${W - 12}" y2="${y0}" stroke="${INK}" stroke-width="2"/>
+    <text x="16" y="${(top + y0) / 2}" font-size="13" fill="${INK}" font-family="Verdana,sans-serif"
+      transform="rotate(-90 16 ${(top + y0) / 2})" text-anchor="middle">${yTitle || ""}</text>`;
+  cats.forEach((c, i) => {
+    const gx = x0 + 14 + i * (bw * 2 + gap + grp);
+    b += `<rect x="${gx}" y="${y0 - sc(c.a)}" width="${bw}" height="${sc(c.a)}" fill="${INK}" stroke="${INK}" stroke-width="1.5"/>
+      <rect x="${gx + bw + gap}" y="${y0 - sc(c.b)}" width="${bw}" height="${sc(c.b)}" fill="url(#hh)" stroke="${INK}" stroke-width="1.5"/>
+      <text x="${gx + bw + gap / 2}" y="${y0 + 16}" font-size="13" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${c.l}</text>`;
+  });
+  b += `<rect x="${W - 92}" y="6" width="12" height="12" fill="${INK}"/>
+    <text x="${W - 76}" y="16" font-size="13" fill="${INK}" font-family="Verdana,sans-serif">${legA}</text>
+    <rect x="${W - 92}" y="22" width="12" height="12" fill="url(#hh)" stroke="${INK}" stroke-width="1.5"/>
+    <text x="${W - 76}" y="32" font-size="13" fill="${INK}" font-family="Verdana,sans-serif">${legB}</text>`;
+  return svg(W, H, b);
+}
+
+/* pie chart from values */
+function gPie(values, labels, size) {
+  size = size || 150; const r = size / 2 - 4, cx = size / 2, cy = size / 2;
+  const tot = values.reduce((a, b) => a + b, 0);
+  let ang = -Math.PI / 2, b = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fffdf7" stroke="${INK}" stroke-width="2"/>`;
+  values.forEach((v, i) => {
+    const sweep = (v / tot) * Math.PI * 2, mid = ang + sweep / 2;
+    b += `<line x1="${cx}" y1="${cy}" x2="${cx + r * Math.cos(ang)}" y2="${cy + r * Math.sin(ang)}" stroke="${INK}" stroke-width="2"/>`;
+    if (labels && labels[i]) {
+      const lx = cx + r * 0.62 * Math.cos(mid), ly = cy + r * 0.62 * Math.sin(mid);
+      labels[i].split("|").forEach((ln, k) =>
+        b += `<text x="${lx}" y="${ly + k * 12 - 3}" font-size="11" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${ln}</text>`);
+    }
+    ang += sweep;
+  });
+  return svg(size, size, b);
+}
+
+/* row of beads: string of b/w */
+function gBeads(pat) {
+  let b = "", x = 16;
+  for (const ch of pat) { b += `<circle cx="${x}" cy="18" r="13" fill="${ch === "b" ? INK : "#fffdf7"}" stroke="${INK}" stroke-width="2"/>`; x += 28; }
+  return svg(x, 40, b);
+}
+
+/* circles, some shaded */
+function gCircles(total, shadedIdx, perRow) {
+  perRow = perRow || 5; let b = "";
+  for (let i = 0; i < total; i++) {
+    const r = Math.floor(i / perRow), c = i % perRow;
+    b += `<circle cx="${c * 46 + 26}" cy="${r * 46 + 26}" r="19"
+      fill="${shadedIdx.indexOf(i) > -1 ? SHADE : "#fffdf7"}" stroke="${INK}" stroke-width="2"/>`;
+  }
+  return svg(perRow * 46 + 6, Math.ceil(total / perRow) * 46 + 6, b);
+}
+
+/* rectangular prism with labels */
+function gPrism(l, w, h, unit) {
+  const b = `<polygon points="30,60 130,60 165,35 65,35" fill="#fffdf7" stroke="${INK}" stroke-width="2"/>
+    <polygon points="130,60 165,35 165,95 130,120" fill="${SHADE}" stroke="${INK}" stroke-width="2"/>
+    <rect x="30" y="60" width="100" height="60" fill="#fffdf7" stroke="${INK}" stroke-width="2"/>
+    <text x="80" y="138" font-size="15" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${l} ${unit}</text>
+    <text x="178" y="82" font-size="15" fill="${INK}" font-family="Verdana,sans-serif">${h} ${unit}</text>
+    <text x="150" y="26" font-size="15" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${w} ${unit}</text>`;
+  return svg(215, 148, b);
+}
+
+/* measuring jug */
+function gJug(fillFrac, topLabel) {
+  const jx = 34, jy = 20, jw = 92, jh = 132, fh = jh * fillFrac;
+  let b = `<path d="M${jx} ${jy} L${jx} ${jy + jh} Q${jx} ${jy + jh + 12} ${jx + 14} ${jy + jh + 12}
+      L${jx + jw - 14} ${jy + jh + 12} Q${jx + jw} ${jy + jh + 12} ${jx + jw} ${jy + jh} L${jx + jw} ${jy}"
+      fill="#fffdf7" stroke="${INK}" stroke-width="2.5"/>
+    <rect x="${jx + 2}" y="${jy + jh - fh}" width="${jw - 4}" height="${fh + 10}" fill="${SHADE}" opacity=".85"/>
+    <path d="M${jx + jw} ${jy + 22} q26 34 0 68" fill="none" stroke="${INK}" stroke-width="2.5"/>`;
+  for (let i = 1; i <= 4; i++) {
+    const y = jy + jh - (jh / 4) * i;
+    b += `<line x1="${jx}" y1="${y}" x2="${jx + (i === 4 ? 36 : 20)}" y2="${y}" stroke="${INK}" stroke-width="2.5"/>`;
+  }
+  b += `<text x="${jx + 44}" y="${jy + 6}" font-size="16" fill="${INK}" font-family="Verdana,sans-serif">${topLabel}</text>`;
+  return svg(200, 186, b);
+}
+
+/* four 2-D shapes on a grid, numbered */
+function gShapes2D() {
+  let b = `<rect x="0" y="0" width="330" height="150" fill="#fffdf7"/>`;
+  for (let x = 0; x <= 330; x += 30) b += `<line x1="${x}" y1="0" x2="${x}" y2="150" stroke="#d8d2c4" stroke-width="1"/>`;
+  for (let y = 0; y <= 150; y += 30) b += `<line x1="0" y1="${y}" x2="330" y2="${y}" stroke="#d8d2c4" stroke-width="1"/>`;
+  b += `<polygon points="60,15 105,75 15,75" fill="${INK}"/><text x="60" y="62" font-size="16" fill="#fff" text-anchor="middle" font-family="Verdana,sans-serif">1</text>
+    <polygon points="30,135 90,135 105,90 15,90" fill="${INK}"/><text x="60" y="122" font-size="16" fill="#fff" text-anchor="middle" font-family="Verdana,sans-serif">2</text>
+    <polygon points="180,15 300,15 270,60 150,60" fill="${INK}"/><text x="225" y="44" font-size="16" fill="#fff" text-anchor="middle" font-family="Verdana,sans-serif">3</text>
+    <circle cx="225" cy="112" r="34" fill="${INK}"/><text x="225" y="119" font-size="16" fill="#fff" text-anchor="middle" font-family="Verdana,sans-serif">4</text>`;
+  return svg(330, 150, b);
+}
+
+/* four candidate nets, labelled A-D */
+function gNets() {
+  const sets = [
+    { k:"A", ox:16,  cells:[[0,0],[1,0],[2,0],[3,0],[4,0]] },              // straight strip of 5
+    { k:"B", ox:70,  cells:[[0,0],[0,1],[0,2],[0,3],[1,1]] },              // 4 walls + base  (valid)
+    { k:"C", ox:190, cells:[[0,0],[0,1],[1,0],[1,1],[2,0]] },              // 2x2 block + 1
+    { k:"D", ox:260, cells:[[0,0],[1,0],[1,1],[2,1],[2,2]] }               // staircase
+  ];
+  const s2 = 22; let b = `<rect x="0" y="0" width="360" height="150" fill="#fffdf7"/>`;
+  sets.forEach(n => {
+    n.cells.forEach(p => {
+      b += `<rect x="${n.ox + p[1] * s2}" y="${16 + p[0] * s2}" width="${s2}" height="${s2}" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
+    });
+    const wdt = (Math.max.apply(null, n.cells.map(p => p[1])) + 1) * s2;
+    b += `<text x="${n.ox + wdt / 2}" y="142" font-size="16" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif" font-weight="bold">${n.k}</text>`;
+  });
+  return svg(360, 150, b);
+}
+
+/* reflection: a flag shape and four candidate results */
+function gReflect() {
+  const FLAG = `<g stroke="${INK}" stroke-width="3" fill="${INK}" stroke-linejoin="round">
+      <line x1="12" y1="8" x2="12" y2="44"/><polygon points="12,9 28,14 12,19"/></g>`;
+  const BW = 78, BH = 50;
+  const box = (ox, oy, lbl, tf) =>
+    `<rect x="${ox}" y="${oy}" width="${BW}" height="${BH}" fill="#fffdf7" stroke="${INK}" stroke-width="2"/>
+     <line x1="${ox + BW / 2}" y1="${oy}" x2="${ox + BW / 2}" y2="${oy + BH}" stroke="${INK}" stroke-width="2" stroke-dasharray="5 4"/>
+     <g transform="translate(${ox},${oy}) ${tf}">${FLAG}</g>` +
+    (lbl ? `<text x="${ox + BW / 2}" y="${oy + BH + 18}" font-size="16" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif" font-weight="bold">${lbl}</text>` : "");
+  let b = `<rect x="0" y="0" width="360" height="200" fill="#fffdf7"/>
+    <text x="30" y="30" font-size="14" fill="${INK}" font-family="Verdana,sans-serif">${""}</text>`;
+  b += box(141, 8, "", "");                                        // original
+  b += box(8,   106, "A", `translate(40,0)`);                      // slid across, not flipped
+  b += box(98,  106, "B", `translate(${BW},0) scale(-1,1)`);       // true reflection
+  b += box(188, 106, "C", `translate(0,${BH}) scale(1,-1)`);       // flipped top to bottom
+  b += box(278, 106, "D", `translate(${BW},${BH}) scale(-1,-1)`);  // turned right around
+  return svg(360, 200, b);
+}
+
+/* three cubes standing on the floor, plus candidate plan views (A-D) */
+function gStackTop() {
+  const cube = (x, y) => `<polygon points="${x},${y} ${x + 22},${y - 11} ${x + 44},${y} ${x + 22},${y + 11}" fill="#fff" stroke="${INK}" stroke-width="1.6"/>
+    <polygon points="${x},${y} ${x},${y + 24} ${x + 22},${y + 35} ${x + 22},${y + 11}" fill="#e6e0d2" stroke="${INK}" stroke-width="1.6"/>
+    <polygon points="${x + 22},${y + 11} ${x + 22},${y + 35} ${x + 44},${y + 24} ${x + 44},${y}" fill="${SHADE}" stroke="${INK}" stroke-width="1.6"/>`;
+  let b = `<rect x="0" y="0" width="360" height="176" fill="#fffdf7"/>`;
+  b += cube(56, 52) + cube(34, 63) + cube(78, 63);   // back cube, then the two in front: an L on the floor
+  const grid = (ox, oy, on, lbl) => {
+    let g = "";
+    for (let r = 0; r < 2; r++) for (let c = 0; c < 2; c++)
+      g += `<rect x="${ox + c * 22}" y="${oy + r * 22}" width="22" height="22"
+        fill="${on.indexOf(r + "," + c) > -1 ? SHADE : "#fff"}" stroke="${INK}" stroke-width="1.6"/>`;
+    g += `<text x="${ox + 22}" y="${oy + 62}" font-size="16" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif" font-weight="bold">${lbl}</text>`;
+    return g;
+  };
+  b += grid(196, 22, ["0,0", "0,1", "1,0", "1,1"], "A");
+  b += grid(280, 22, ["0,0", "1,0"], "B");
+  b += grid(196, 100, ["0,0", "1,0", "1,1"], "C");
+  b += grid(280, 100, ["0,1", "1,0"], "D");
+  return svg(360, 176, b);
+}
+
+/* growing triangle pattern 1, 4, 9 */
+function gTriPattern() {
+  const tri = (x, y, s, fill) => `<polygon points="${x},${y + s} ${x + s / 2},${y} ${x + s},${y + s}" fill="${fill}" stroke="${INK}" stroke-width="1.2"/>`;
+  let b = `<rect x="0" y="0" width="340" height="120" fill="#fffdf7"/>`;
+  [1, 2, 3].forEach((n, i) => {
+    const ox = 60 + i * 110, s = 22, oy = 84 - n * s;
+    let g = "";
+    for (let r = 0; r < n; r++) {
+      const y = oy + r * s;
+      for (let c = 0; c <= r; c++) g += tri(ox - r * s / 2 + c * s, y, s, INK);
+      for (let c = 0; c < r; c++) g += tri(ox - r * s / 2 + c * s + s / 2, y, s, "#fff");
+    }
+    b += g + `<text x="${ox}" y="110" font-size="14" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${i + 1}</text>`;
+  });
+  return svg(340, 120, b);
+}
+
+/* matchstick strip: n triangles sharing sides, uses 2n + 1 matches */
+function gMatch(n) {
+  const w = 44, h = 40, ox = 16, oy = 58;
+  let b = `<rect x="0" y="0" width="${ox * 2 + n * w / 2 + w / 2}" height="86" fill="#fffdf7"/>`;
+  const stick = (x1, y1, x2, y2) =>
+    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${BRASS}" stroke-width="5" stroke-linecap="round"/>`;
+  for (let i = 0; i < n; i++) {
+    const x = ox + i * w / 2;
+    if (i % 2 === 0) { b += stick(x, oy, x + w, oy); b += stick(x, oy, x + w / 2, oy - h); }
+    else { b += stick(x, oy - h, x + w, oy - h); b += stick(x, oy - h, x + w / 2, oy); }
+  }
+  // closing stick on the right
+  const lx = ox + (n - 1) * w / 2;
+  b += (n % 2 === 1) ? stick(lx + w / 2, oy - h, lx + w, oy) : stick(lx + w / 2, oy, lx + w, oy - h);
+  let g = "";
+  for (let i = 0; i < n; i++) g += `<text x="${ox + i * w / 2 + w / 2}" y="78" font-size="13" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${i + 1}</text>`;
+  return svg(ox * 2 + n * w / 2 + w / 2, 86, b + g);
+}
+
+/* squares pattern: 1, 3, 6 */
+function gSquarePattern() {
+  const s = 20; let b = `<rect x="0" y="0" width="330" height="110" fill="#fffdf7"/>`;
+  const shapes = [[[0, 0]], [[0, 0], [1, 0], [1, 1]], [[0, 0], [1, 0], [1, 1], [2, 0], [2, 1], [2, 2]]];
+  shapes.forEach((cells, i) => {
+    const ox = 30 + i * 105;
+    cells.forEach(p => b += `<rect x="${ox + p[1] * s}" y="${20 + p[0] * s}" width="${s}" height="${s}" fill="#fff" stroke="${INK}" stroke-width="2"/>`);
+    b += `<text x="${ox + 22}" y="100" font-size="14" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${i + 1}</text>`;
+  });
+  return svg(330, 110, b);
+}
+
+/* 3-D objects */
+function gSolid(kind) {
+  let b = `<rect x="0" y="0" width="180" height="150" fill="#fffdf7"/>`;
+  if (kind === "cyl") b += `<ellipse cx="90" cy="35" rx="42" ry="14" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <path d="M48 35 L48 110 A42 14 0 0 0 132 110 L132 35" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <path d="M48 110 A42 14 0 0 0 132 110" fill="none" stroke="${INK}" stroke-width="2"/>`;
+  if (kind === "cone") b += `<path d="M90 20 L136 112 A46 14 0 0 1 44 112 Z" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <path d="M44 112 A46 14 0 0 0 136 112" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>`;
+  if (kind === "tetra") b += `<polygon points="90,18 150,116 30,116" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <line x1="90" y1="18" x2="104" y2="94" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>
+    <line x1="30" y1="116" x2="104" y2="94" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>
+    <line x1="150" y1="116" x2="104" y2="94" stroke="${INK}" stroke-width="2"/>`;
+  if (kind === "sqpyr") b += `<polygon points="90,14 150,98 30,98" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <polygon points="30,98 90,124 150,98" fill="#efe9dc" stroke="${INK}" stroke-width="2"/>
+    <line x1="90" y1="14" x2="90" y2="124" stroke="${INK}" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  if (kind === "triprism") b += `<polygon points="42,110 92,110 67,54" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <polygon points="92,110 67,54 107,34 132,90" fill="#efe9dc" stroke="${INK}" stroke-width="2"/>
+    <polygon points="92,110 132,90 132,90" fill="none" stroke="${INK}" stroke-width="2"/>
+    <line x1="42" y1="110" x2="82" y2="90" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>
+    <line x1="82" y1="90" x2="132" y2="90" stroke="${INK}" stroke-width="2"/>
+    <line x1="82" y1="90" x2="107" y2="34" stroke="${INK}" stroke-width="2" stroke-dasharray="4 3"/>`;
+  if (kind === "cube") b += `<rect x="40" y="48" width="74" height="74" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <polygon points="40,48 66,24 140,24 114,48" fill="#efe9dc" stroke="${INK}" stroke-width="2"/>
+    <polygon points="114,48 140,24 140,98 114,122" fill="#e0dacb" stroke="${INK}" stroke-width="2"/>`;
+  return svg(180, 150, b);
+}
+
+/* rectangle with candidate symmetry lines */
+function gSymmetry() {
+  const rect = (ox, lines, lbl) => {
+    let g = `<rect x="${ox}" y="18" width="72" height="48" fill="#fffdf7" stroke="${INK}" stroke-width="2.5"/>`;
+    if (lines.indexOf("h") > -1) g += `<line x1="${ox}" y1="42" x2="${ox + 72}" y2="42" stroke="${INK}" stroke-width="1.6"/>`;
+    if (lines.indexOf("v") > -1) g += `<line x1="${ox + 36}" y1="18" x2="${ox + 36}" y2="66" stroke="${INK}" stroke-width="1.6"/>`;
+    if (lines.indexOf("d") > -1) g += `<line x1="${ox}" y1="18" x2="${ox + 72}" y2="66" stroke="${INK}" stroke-width="1.6"/>`;
+    if (lines.indexOf("e") > -1) g += `<line x1="${ox}" y1="66" x2="${ox + 72}" y2="18" stroke="${INK}" stroke-width="1.6"/>`;
+    g += `<text x="${ox + 36}" y="84" font-size="15" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif" font-weight="bold">${lbl}</text>`;
+    return g;
+  };
+  let b = `<rect x="0" y="0" width="360" height="96" fill="#fffdf7"/>`;
+  b += rect(10, ["d", "e"], "A") + rect(100, ["h", "v"], "B") + rect(190, ["v", "d"], "C") + rect(280, ["e"], "D");
+  return svg(360, 96, b);
+}
+
+/* angle drawing */
+function gAngle(deg) {
+  const rad = deg * Math.PI / 180, cx = 40, cy = 100, L = 100;
+  const b = `<rect x="0" y="0" width="200" height="130" fill="#fffdf7"/>
+    <line x1="${cx}" y1="${cy}" x2="${cx + L}" y2="${cy}" stroke="${INK}" stroke-width="3"/>
+    <line x1="${cx}" y1="${cy}" x2="${cx + L * Math.cos(rad)}" y2="${cy - L * Math.sin(rad)}" stroke="${INK}" stroke-width="3"/>
+    <path d="M${cx + 26} ${cy} A26 26 0 0 0 ${cx + 26 * Math.cos(rad)} ${cy - 26 * Math.sin(rad)}" fill="none" stroke="${BRASS}" stroke-width="3"/>`;
+  return svg(200, 130, b);
+}
+
+/* number line between two marks */
+function gNumberLine(a, b2) {
+  const body = `<rect x="0" y="0" width="300" height="70" fill="#fffdf7"/>
+    <line x1="14" y1="30" x2="286" y2="30" stroke="${INK}" stroke-width="2.5"/>
+    <line x1="90" y1="18" x2="90" y2="42" stroke="${INK}" stroke-width="3"/>
+    <line x1="210" y1="18" x2="210" y2="42" stroke="${INK}" stroke-width="3"/>
+    <text x="90" y="60" font-size="15" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${a}</text>
+    <text x="210" y="60" font-size="15" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${b2}</text>`;
+  return svg(300, 70, body);
+}
+
+/* unit cubes filling a box */
+function gUnitBox(l, w, h) {
+  const b = `<rect x="0" y="0" width="340" height="130" fill="#fffdf7"/>
+    <polygon points="24,50 174,50 204,26 54,26" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <polygon points="174,50 204,26 204,74 174,98" fill="#efe9dc" stroke="${INK}" stroke-width="2"/>
+    <rect x="24" y="50" width="150" height="48" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <text x="99" y="116" font-size="15" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${l} cm</text>
+    <text x="214" y="72" font-size="15" fill="${INK}" font-family="Verdana,sans-serif">${h} cm</text>
+    <text x="196" y="20" font-size="15" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">${w} cm</text>
+    <rect x="276" y="52" width="26" height="26" fill="#fff" stroke="${INK}" stroke-width="2"/>
+    <polygon points="276,52 286,42 312,42 302,52" fill="#efe9dc" stroke="${INK}" stroke-width="2"/>
+    <polygon points="302,52 312,42 312,68 302,78" fill="#e0dacb" stroke="${INK}" stroke-width="2"/>
+    <text x="294" y="96" font-size="13" text-anchor="middle" fill="${INK}" font-family="Verdana,sans-serif">1 cm</text>`;
+  return svg(340, 130, b);
+}
+
+/* fraction helpers for option text */
+const fr = (n, d) => `<span class="fr"><i>${n}</i><b>${d}</b></span>`;
+const mx = (w, n, d) => `${w}${fr(n, d)}`;
+
+/* ============================================================
+   SECTION: QUESTION BANK
+   Teachers: edit freely. Each item needs
+   a  = CAPS area (NUM / ALG / GEO / MEA / DAT)
+   ch = chapter index 0-5
+   q / qAf   question text
+   fig       optional inline SVG
+   o / oAf   options (HTML allowed)
+   ci        index of the CORRECT option in the arrays above
+   ex / exAf worked explanation
+   hi / hiAf short hint shown after the first wrong answer
+   ============================================================ */
+const QUESTION_BANK = [
+
+/* ---------- CHAPTER 0 · THE DOCKS · whole numbers & operations ---------- */
+{a:"NUM",ch:0,q:"Estimate the answer of 998 ÷ 47.",qAf:"Skat die antwoord van 998 ÷ 47.",
+ o:["20","25","38","45"],oAf:["20","25","38","45"],ci:0,
+ hi:"Round 998 to 1 000 and 47 to 50.",hiAf:"Rond 998 af na 1 000 en 47 na 50.",
+ ex:"1 000 ÷ 50 = 20, so the answer is about 20.",exAf:"1 000 ÷ 50 = 20, dus is die antwoord ongeveer 20."},
+
+{a:"NUM",ch:0,q:"Which digit stands for the hundred thousands in 4 782 615?",qAf:"Watter syfer staan vir die honderdduisende in 4 782 615?",
+ o:["8","7","6","4"],oAf:["8","7","6","4"],ci:1,
+ hi:"Count the places from the right: units, tens, hundreds, thousands…",hiAf:"Tel die plekke van regs af: ene, tiene, honderde, duisende…",
+ ex:"4 782 615 = 4 millions, 7 hundred thousands, 8 ten thousands, 2 thousands…  The 7 stands for 700 000.",
+ exAf:"4 782 615 = 4 miljoene, 7 honderdduisende, 8 tienduisende, 2 duisende…  Die 7 staan vir 700 000."},
+
+{a:"NUM",ch:1,q:"Choose one of the numbers below to make the number sentence true.<br>13,9 × ______ = 1 390",
+ qAf:"Kies een van die getalle hieronder om die getalsin waar te maak.<br>13,9 × ______ = 1 390",
+ o:["1 000","1","100","10"],oAf:["1 000","1","100","10"],ci:2,
+ hi:"The comma has to move two places to the right.",hiAf:"Die komma moet twee plekke na regs skuif.",
+ ex:"13,9 × 100 = 1 390. Multiplying by 100 moves the comma two places right.",
+ exAf:"13,9 × 100 = 1 390. Vermenigvuldig met 100 skuif die komma twee plekke na regs."},
+
+{a:"ALG",ch:3,q:"Which number sentence shows that the product of two numbers is 374?",
+ qAf:"Watter getalsin wys dat die produk van twee getalle 374 is?",
+ o:["374 × 34 = ▢","374 − 34 = ▢","34 + ▢ = 374","34 × ▢ = 374"],
+ oAf:["374 × 34 = ▢","374 − 34 = ▢","34 + ▢ = 374","34 × ▢ = 374"],ci:3,
+ hi:"'Product' is the answer to a multiplication.",hiAf:"'Produk' is die antwoord van 'n vermenigvuldiging.",
+ ex:"Product means multiply, and the answer must be 374. So 34 × ▢ = 374.",
+ exAf:"Produk beteken vermenigvuldig, en die antwoord moet 374 wees. Dus 34 × ▢ = 374."},
+
+{a:"NUM",ch:0,q:"Which number below is divisible by 2, 3 and 5?",qAf:"Watter getal hieronder is deelbaar deur 2, 3 en 5?",
+ o:["330","145","1 000","115"],oAf:["330","145","1 000","115"],ci:0,
+ hi:"It must end in 0, and its digits must add up to a multiple of 3.",hiAf:"Dit moet op 0 eindig, en die syfers moet optel tot 'n veelvoud van 3.",
+ ex:"330 ends in 0 (÷2 and ÷5) and 3+3+0 = 6, a multiple of 3. So 330 ÷ 2 = 165, ÷ 3 = 110, ÷ 5 = 66.",
+ exAf:"330 eindig op 0 (÷2 en ÷5) en 3+3+0 = 6, 'n veelvoud van 3. Dus 330 ÷ 2 = 165, ÷ 3 = 110, ÷ 5 = 66."},
+
+{a:"NUM",ch:1,q:"Which of these numbers is the largest?",qAf:"Watter een van hierdie getalle is die grootste?",
+ o:["3,03","3,3","3,003","3,0003"],oAf:["3,03","3,3","3,003","3,0003"],ci:1,
+ hi:"Give them all the same number of decimal places first.",hiAf:"Gee hulle eers almal ewe veel desimale plekke.",
+ ex:"3,3000  3,0300  3,0030  3,0003. The largest is 3,3.",
+ exAf:"3,3000  3,0300  3,0030  3,0003. Die grootste is 3,3."},
+
+{a:"NUM",ch:3,q:"Which statement is true?",qAf:"Watter stelling is waar?",
+ o:["36 × 3 = 18 × 9","36 × 3 = 63 × 5","36 × 3 = 18 × 3 × 2","36 × 3 = 18 × 3 × 1"],
+ oAf:["36 × 3 = 18 × 9","36 × 3 = 63 × 5","36 × 3 = 18 × 3 × 2","36 × 3 = 18 × 3 × 1"],ci:2,
+ hi:"36 × 3 = 108. Work out each right-hand side.",hiAf:"36 × 3 = 108. Bereken elke regterkant.",
+ ex:"36 = 18 × 2, so 36 × 3 = 18 × 2 × 3 = 108. The others give 162, 315 and 54.",
+ exAf:"36 = 18 × 2, dus 36 × 3 = 18 × 2 × 3 = 108. Die ander gee 162, 315 en 54."},
+
+{a:"NUM",ch:0,q:"Round off 4 768 to the nearest 5.",qAf:"Rond 4 768 af tot die naaste 5.",
+ o:["5 000","4 765","4 760","4 770"],oAf:["5 000","4 765","4 760","4 770"],ci:3,
+ hi:"The two nearest multiples of 5 are 4 765 and 4 770.",hiAf:"Die twee naaste veelvoude van 5 is 4 765 en 4 770.",
+ ex:"4 768 is 3 away from 4 765 but only 2 away from 4 770, so it rounds to 4 770.",
+ exAf:"4 768 is 3 weg van 4 765 maar net 2 weg van 4 770, dus rond dit af na 4 770."},
+
+{a:"NUM",ch:1,q:"Round off 6 984,5 to the nearest unit.",qAf:"Rond 6 984,5 af tot die naaste eenheid.",
+ o:["6 985","6 984","6 990","7 000"],oAf:["6 985","6 984","6 990","7 000"],ci:0,
+ hi:"Look at the digit after the comma.",hiAf:"Kyk na die syfer ná die komma.",
+ ex:"The digit after the comma is 5, so we round up: 6 985.",exAf:"Die syfer ná die komma is 5, dus rond ons op: 6 985."},
+
+{a:"NUM",ch:0,q:"A bottle of cold drink costs R15. How many bottles can Tim buy with R537?",
+ qAf:"'n Bottel koeldrank kos R15. Hoeveel bottels kan Tim met R537 koop?",
+ o:["30 bottles","35 bottles","36 bottles","40 bottles"],oAf:["30 bottels","35 bottels","36 bottels","40 bottels"],ci:1,
+ hi:"Divide R537 by R15 and ignore what is left over.",hiAf:"Deel R537 deur R15 en ignoreer wat oorbly.",
+ ex:"537 ÷ 15 = 35 with R12 left over. He cannot buy part of a bottle, so 35 bottles.",
+ exAf:"537 ÷ 15 = 35 met R12 oor. Hy kan nie 'n deel van 'n bottel koop nie, dus 35 bottels."},
+
+{a:"NUM",ch:0,q:"Calculate: 632 × 83",qAf:"Bereken: 632 × 83",
+ o:["51 482","51 248","52 456","51 428"],oAf:["51 482","51 248","52 456","51 428"],ci:2,
+ hi:"Split it: 632 × 80 and then 632 × 3.",hiAf:"Breek dit op: 632 × 80 en dan 632 × 3.",
+ ex:"632 × 80 = 50 560 and 632 × 3 = 1 896. 50 560 + 1 896 = 52 456.",
+ exAf:"632 × 80 = 50 560 en 632 × 3 = 1 896. 50 560 + 1 896 = 52 456."},
+
+{a:"NUM",ch:0,q:"Calculate: 34 653 ÷ 15",qAf:"Bereken: 34 653 ÷ 15",
+ o:["2 130 remainder 3","2 013 remainder 3","2 301 remainder 3","2 310 remainder 3"],
+ oAf:["2 130 res 3","2 013 res 3","2 301 res 3","2 310 res 3"],ci:3,
+ hi:"Estimate first: 15 × 2 000 = 30 000, so the answer is just over 2 000.",
+ hiAf:"Skat eers: 15 × 2 000 = 30 000, dus is die antwoord net oor 2 000.",
+ ex:"15 × 2 310 = 34 650, and 34 653 − 34 650 = 3. So 2 310 remainder 3.",
+ exAf:"15 × 2 310 = 34 650, en 34 653 − 34 650 = 3. Dus 2 310 res 3."},
+
+{a:"NUM",ch:0,q:"Calculate: 22 869 + 15 855",qAf:"Bereken: 22 869 + 15 855",
+ o:["38 724","38 714","37 714","38 624"],oAf:["38 724","38 714","37 714","38 624"],ci:0,
+ hi:"Add the thousands first: 22 000 + 15 000 = 37 000.",hiAf:"Tel eers die duisende op: 22 000 + 15 000 = 37 000.",
+ ex:"22 869 + 15 855 = 38 724. Check: 22 869 + 15 000 = 37 869, then + 855 = 38 724.",
+ exAf:"22 869 + 15 855 = 38 724. Toets: 22 869 + 15 000 = 37 869, dan + 855 = 38 724."},
+
+{a:"NUM",ch:3,q:"Which number makes this number sentence true?<br>47 × 34 = 34 × ______",
+ qAf:"Watter getal maak hierdie getalsin waar?<br>47 × 34 = 34 × ______",
+ o:["74","47","24","43"],oAf:["74","47","24","43"],ci:1,
+ hi:"The order of the two numbers you multiply may be swapped.",hiAf:"Die volgorde van die twee getalle wat jy vermenigvuldig mag omgeruil word.",
+ ex:"Multiplication is commutative: 47 × 34 = 34 × 47.",exAf:"Vermenigvuldiging is kommutatief: 47 × 34 = 34 × 47."},
+
+{a:"NUM",ch:3,q:"Which number must be written in the block to make the statement true?<br>56 + (98 + 80) = (56 + ▢) + 80",
+ qAf:"Watter getal moet in die blokkie geskryf word om die stelling waar te maak?<br>56 + (98 + 80) = (56 + ▢) + 80",
+ o:["178","244","98","154"],oAf:["178","244","98","154"],ci:2,
+ hi:"Only the brackets moved. The three numbers stay the same.",hiAf:"Net die hakies het geskuif. Die drie getalle bly dieselfde.",
+ ex:"Addition is associative: you may regroup without changing the numbers. Both sides equal 234.",
+ exAf:"Optelling is assosiatief: jy mag hergroepeer sonder om die getalle te verander. Albei kante is 234."},
+
+/* ---------- CHAPTER 1 · THE MARKET · fractions, decimals, percentages ---------- */
+{a:"NUM",ch:1,q:"Write the answer as a decimal fraction.<br>500,7 + 6 + 0,08 + 30 =",
+ qAf:"Skryf die antwoord as 'n desimale breuk.<br>500,7 + 6 + 0,08 + 30 =",
+ o:["530,78","536,87","5 306,78","536,78"],oAf:["530,78","536,87","5 306,78","536,78"],ci:3,
+ hi:"Line the commas up under one another.",hiAf:"Belyn die kommas onder mekaar.",
+ ex:"500,7 + 30 = 530,7;  + 6 = 536,7;  + 0,08 = 536,78.",exAf:"500,7 + 30 = 530,7;  + 6 = 536,7;  + 0,08 = 536,78."},
+
+{a:"NUM",ch:1,q:"Calculate: 65,41 − 28,95",qAf:"Bereken: 65,41 − 28,95",
+ o:["36,46","36,56","37,46","36,54"],oAf:["36,46","36,56","37,46","36,54"],ci:0,
+ hi:"Write them under each other with the commas in line.",hiAf:"Skryf hulle onder mekaar met die kommas in lyn.",
+ ex:"65,41 − 28,95 = 36,46. Check: 36,46 + 28,95 = 65,41.",exAf:"65,41 − 28,95 = 36,46. Toets: 36,46 + 28,95 = 65,41."},
+
+{a:"NUM",ch:1,q:"Calculate: 72 − 59,032",qAf:"Bereken: 72 − 59,032",
+ o:["13,968","12,968","13,032","12,068"],oAf:["13,968","12,968","13,032","12,068"],ci:1,
+ hi:"Write 72 as 72,000 first.",hiAf:"Skryf 72 eers as 72,000.",
+ ex:"72,000 − 59,032 = 12,968.",exAf:"72,000 − 59,032 = 12,968."},
+
+{a:"NUM",ch:1,q:"Calculate: 8,435 + 69 + 101,239",qAf:"Bereken: 8,435 + 69 + 101,239",
+ o:["177,674","178,467","178,674","178,764"],oAf:["177,674","178,467","178,674","178,764"],ci:2,
+ hi:"69 is the same as 69,000.",hiAf:"69 is dieselfde as 69,000.",
+ ex:"8,435 + 101,239 = 109,674, then + 69 = 178,674.",exAf:"8,435 + 101,239 = 109,674, dan + 69 = 178,674."},
+
+{a:"NUM",ch:1,q:"Calculate: 0,3 × 0,9",qAf:"Bereken: 0,3 × 0,9",
+ o:["0,72","0,027","2,7","0,27"],oAf:["0,72","0,027","2,7","0,27"],ci:3,
+ hi:"3 × 9 = 27. Now count the decimal places.",hiAf:"3 × 9 = 27. Tel nou die desimale plekke.",
+ ex:"3 × 9 = 27. There is 1 decimal place in each factor, so 2 altogether: 0,27.",
+ exAf:"3 × 9 = 27. Daar is 1 desimale plek in elke faktor, dus 2 altesaam: 0,27."},
+
+{a:"NUM",ch:1,q:"Calculate: 1 387 ÷ 100",qAf:"Bereken: 1 387 ÷ 100",
+ o:["13,87","1,387","13,087","138,7"],oAf:["13,87","1,387","13,087","138,7"],ci:0,
+ hi:"Dividing by 100 moves the comma two places to the left.",hiAf:"Deel deur 100 skuif die komma twee plekke na links.",
+ ex:"1 387 ÷ 100 = 13,87.",exAf:"1 387 ÷ 100 = 13,87."},
+
+{a:"NUM",ch:2,q:"Calculate 25% of R200.",qAf:"Bereken 25% van R200.",
+ o:["R25","R50","R75","R100"],oAf:["R25","R50","R75","R100"],ci:1,
+ hi:"25% is the same as one quarter.",hiAf:"25% is dieselfde as een kwart.",
+ ex:"25% = ¼, and R200 ÷ 4 = R50.",exAf:"25% = ¼, en R200 ÷ 4 = R50."},
+
+{a:"NUM",ch:2,q:"Luthando got 48 marks out of 60 for his Mathematics test. What percentage did he get?",
+ qAf:"Luthando het 48 punte uit 60 vir sy Wiskundetoets gekry. Watter persentasie het hy gekry?",
+ o:["48%","75%","80%","85%"],oAf:["48%","75%","80%","85%"],ci:2,
+ hi:"Simplify 48 out of 60 first.",hiAf:"Vereenvoudig eers 48 uit 60.",
+ ex:"48/60 = 4/5. And 4/5 = 80/100 = 80%.",exAf:"48/60 = 4/5. En 4/5 = 80/100 = 80%."},
+
+{a:"NUM",ch:2,q:"Nomathole read "+fr(1,3)+" of a 120-page book. How many pages did she read?",
+ qAf:"Nomathole het "+fr(1,3)+" van 'n boek van 120 bladsye gelees. Hoeveel bladsye het sy gelees?",
+ o:["60","360","30","40"],oAf:["60","360","30","40"],ci:3,
+ hi:"Finding a third means dividing by 3.",hiAf:"Om 'n derde te kry beteken deel deur 3.",
+ ex:"120 ÷ 3 = 40 pages.",exAf:"120 ÷ 3 = 40 bladsye."},
+
+{a:"NUM",ch:2,q:"Phuti read "+fr(3,4)+" of the same 120-page book. How many pages did he read?",
+ qAf:"Phuti het "+fr(3,4)+" van dieselfde boek van 120 bladsye gelees. Hoeveel bladsye het hy gelees?",
+ o:["90","80","30","100"],oAf:["90","80","30","100"],ci:0,
+ hi:"First find one quarter, then take three of them.",hiAf:"Kry eers een kwart, neem dan drie daarvan.",
+ ex:"120 ÷ 4 = 30, and 3 × 30 = 90 pages.",exAf:"120 ÷ 4 = 30, en 3 × 30 = 90 bladsye."},
+
+{a:"NUM",ch:2,q:"Calculate: "+fr(5,6)+" + "+fr(2,3)+" =",qAf:"Bereken: "+fr(5,6)+" + "+fr(2,3)+" =",
+ o:[fr(7,9),mx(1,1,2),mx(1,1,6),fr(7,6)],oAf:[fr(7,9),mx(1,1,2),mx(1,1,6),fr(7,6)],ci:1,
+ hi:"Make the denominators the same. 6 works for both.",hiAf:"Maak die noemers dieselfde. 6 werk vir albei.",
+ ex:"5/6 + 4/6 = 9/6 = 1 3/6 = 1 ½.",exAf:"5/6 + 4/6 = 9/6 = 1 3/6 = 1 ½."},
+
+{a:"NUM",ch:2,q:"Calculate: "+mx(2,1,4)+" − "+mx(1,1,2)+" =",qAf:"Bereken: "+mx(2,1,4)+" − "+mx(1,1,2)+" =",
+ o:[mx(1,3,4),mx(1,1,4),fr(3,4),fr(1,4)],oAf:[mx(1,3,4),mx(1,1,4),fr(3,4),fr(1,4)],ci:2,
+ hi:"Change 1½ to 1 2/4 first.",hiAf:"Verander 1½ eers na 1 2/4.",
+ ex:"2 1/4 − 1 2/4. Borrow: 1 5/4 − 1 2/4 = 3/4.",exAf:"2 1/4 − 1 2/4. Leen: 1 5/4 − 1 2/4 = 3/4."},
+
+{a:"NUM",ch:2,q:"Calculate: "+fr(4,5)+" + "+fr(4,7)+" =",qAf:"Bereken: "+fr(4,5)+" + "+fr(4,7)+" =",
+ o:[fr(35,48),mx(1,3,35),fr(8,12),mx(1,13,35)],oAf:[fr(35,48),mx(1,3,35),fr(8,12),mx(1,13,35)],ci:3,
+ hi:"The lowest common denominator of 5 and 7 is 35.",hiAf:"Die kleinste gemene noemer van 5 en 7 is 35.",
+ ex:"28/35 + 20/35 = 48/35 = 1 13/35.",exAf:"28/35 + 20/35 = 48/35 = 1 13/35."},
+
+{a:"NUM",ch:2,q:"Calculate: "+mx(3,2,3)+" + "+mx(1,5,8)+" =",qAf:"Bereken: "+mx(3,2,3)+" + "+mx(1,5,8)+" =",
+ o:[mx(5,7,24),mx(5,6,24),mx(4,6,11),mx(4,7,24)],oAf:[mx(5,7,24),mx(5,6,24),mx(4,6,11),mx(4,7,24)],ci:0,
+ hi:"Add the whole numbers, then the fractions with denominator 24.",hiAf:"Tel die heelgetalle op, dan die breuke met noemer 24.",
+ ex:"3 + 1 = 4.  16/24 + 15/24 = 31/24 = 1 7/24.  4 + 1 7/24 = 5 7/24.",
+ exAf:"3 + 1 = 4.  16/24 + 15/24 = 31/24 = 1 7/24.  4 + 1 7/24 = 5 7/24."},
+
+{a:"NUM",ch:2,q:"Which fraction below has the same value as "+fr(4,12)+"?",
+ qAf:"Watter breuk hieronder het dieselfde waarde as "+fr(4,12)+"?",
+ o:[fr(3,4),fr(1,3),fr(2,3),fr(1,4)],oAf:[fr(3,4),fr(1,3),fr(2,3),fr(1,4)],ci:1,
+ hi:"Divide the numerator and the denominator by the same number.",hiAf:"Deel die teller en die noemer deur dieselfde getal.",
+ ex:"4 ÷ 4 = 1 and 12 ÷ 4 = 3, so 4/12 = 1/3.",exAf:"4 ÷ 4 = 1 en 12 ÷ 4 = 3, dus 4/12 = 1/3."},
+
+{a:"NUM",ch:2,q:"Which number is <b>not</b> equal to "+fr(1,4)+"?",qAf:"Watter getal is <b>nie</b> gelyk aan "+fr(1,4)+" nie?",
+ o:[fr(25,100),"25%","25","0,25"],oAf:[fr(25,100),"25%","25","0,25"],ci:2,
+ hi:"Three of them are different ways of writing a quarter.",hiAf:"Drie van hulle is verskillende maniere om 'n kwart te skryf.",
+ ex:"0,25 = 25/100 = 25% = ¼. But 25 is a whole number, not a quarter.",
+ exAf:"0,25 = 25/100 = 25% = ¼. Maar 25 is 'n heelgetal, nie 'n kwart nie."},
+
+{a:"NUM",ch:2,q:"Which fraction lies between "+fr(1,2)+" and "+fr(3,4)+"?",
+ qAf:"Watter breuk lê tussen "+fr(1,2)+" en "+fr(3,4)+"?",
+ o:[fr(7,8),fr(1,8),fr(3,8),fr(5,8)],oAf:[fr(7,8),fr(1,8),fr(3,8),fr(5,8)],ci:3,
+ hi:"Write both fractions in eighths.",hiAf:"Skryf albei breuke in agstes.",
+ ex:"½ = 4/8 and ¾ = 6/8, so 5/8 lies between them.",exAf:"½ = 4/8 en ¾ = 6/8, dus lê 5/8 tussenin."},
+
+{a:"NUM",ch:2,q:"Which number below lies between "+mx(1,1,4)+" and "+mx(1,1,2)+"?",
+ qAf:"Watter getal hieronder lê tussen "+mx(1,1,4)+" en "+mx(1,1,2)+"?",
+ fa:"A number line with 1¼ and 1½ marked on it.",faAf:"'n Getallelyn met 1¼ en 1½ daarop gemerk.",
+ fig:gNumberLine("1¼","1½"),
+ o:[mx(1,1,3),"2",mx(1,2,3),"1"],oAf:[mx(1,1,3),"2",mx(1,2,3),"1"],ci:0,
+ hi:"As decimals: 1¼ = 1,25 and 1½ = 1,5.",hiAf:"As desimale: 1¼ = 1,25 en 1½ = 1,5.",
+ ex:"1 1/3 ≈ 1,33, which is between 1,25 and 1,5. (1 2/3 ≈ 1,67 is too big.)",
+ exAf:"1 1/3 ≈ 1,33, wat tussen 1,25 en 1,5 lê. (1 2/3 ≈ 1,67 is te groot.)"},
+
+{a:"NUM",ch:1,q:"Which number below is bigger than 54,25?",qAf:"Watter getal hieronder is groter as 54,25?",
+ o:["54,09","54,5","54,05","54,2"],oAf:["54,09","54,5","54,05","54,2"],ci:1,
+ hi:"Compare the tenths digit first.",hiAf:"Vergelyk eers die tiendes-syfer.",
+ ex:"54,5 = 54,50, which is bigger than 54,25. The others are all smaller.",
+ exAf:"54,5 = 54,50, wat groter as 54,25 is. Die ander is almal kleiner."},
+
+{a:"NUM",ch:2,q:"What is the ratio of white beads to black beads?",qAf:"Wat is die verhouding van wit krale tot swart krale?",
+ fa:"A row of twelve beads: four white and eight black.",faAf:"'n Ry van twaalf krale: vier wit en agt swart.",
+ fig:gBeads("bwbbwbbwbbwb"),
+ o:["1 : 1","4 : 12","1 : 2","2 : 1"],oAf:["1 : 1","4 : 12","1 : 2","2 : 1"],ci:2,
+ hi:"Count the white ones and the black ones, then simplify.",hiAf:"Tel die wittes en die swartes, en vereenvoudig dan.",
+ ex:"There are 4 white and 8 black beads. 4 : 8 = 1 : 2.",exAf:"Daar is 4 wit en 8 swart krale. 4 : 8 = 1 : 2."},
+
+{a:"ALG",ch:3,q:"Choose the correct number sentence.<br>The sum of 6 and an unknown number, added to the product of 4 and 5, is equal to 80.",
+ qAf:"Kies die korrekte getalsin.<br>Die som van 6 en 'n onbekende getal, bygetel by die produk van 4 en 5, is gelyk aan 80.",
+ o:["(6 ÷ ▢) + (4 − 5) = 80","(6 − ▢) + (4 + 5) = 80","(6 × ▢) + (4 + 5) = 80","(6 + ▢) + (4 × 5) = 80"],
+ oAf:["(6 ÷ ▢) + (4 − 5) = 80","(6 − ▢) + (4 + 5) = 80","(6 × ▢) + (4 + 5) = 80","(6 + ▢) + (4 × 5) = 80"],ci:3,
+ hi:"Sum means add. Product means multiply.",hiAf:"Som beteken tel op. Produk beteken vermenigvuldig.",
+ ex:"Sum of 6 and ▢ → (6 + ▢). Product of 4 and 5 → (4 × 5). Together: (6 + ▢) + (4 × 5) = 80.",
+ exAf:"Som van 6 en ▢ → (6 + ▢). Produk van 4 en 5 → (4 × 5). Saam: (6 + ▢) + (4 × 5) = 80."},
+
+{a:"NUM",ch:0,q:"Calculate: 105 850 ÷ 21",qAf:"Bereken: 105 850 ÷ 21",
+ o:["5 040 remainder 10","4 040 remainder 10","5 400 remainder 10","4 004 remainder 10"],
+ oAf:["5 040 res 10","4 040 res 10","5 400 res 10","4 004 res 10"],ci:0,
+ hi:"21 × 5 000 = 105 000. How much is left?",hiAf:"21 × 5 000 = 105 000. Hoeveel bly oor?",
+ ex:"21 × 5 000 = 105 000, leaving 850. 21 × 40 = 840, leaving 10. So 5 040 remainder 10.",
+ exAf:"21 × 5 000 = 105 000, dit laat 850. 21 × 40 = 840, dit laat 10. Dus 5 040 res 10."},
+
+{a:"NUM",ch:0,q:"Write down all the factors of 15.",qAf:"Skryf al die faktore van 15 neer.",
+ o:["1; 5; 15","1; 3; 5; 15","3; 5","15; 30; 45"],oAf:["1; 5; 15","1; 3; 5; 15","3; 5","15; 30; 45"],ci:1,
+ hi:"A factor divides into 15 without a remainder.",hiAf:"'n Faktor deel in 15 sonder 'n res.",
+ ex:"1 × 15 = 15 and 3 × 5 = 15, so the factors are 1; 3; 5 and 15.",
+ exAf:"1 × 15 = 15 en 3 × 5 = 15, dus is die faktore 1; 3; 5 en 15."},
+
+{a:"NUM",ch:1,q:"The figure represents one whole. What decimal fraction is shaded?",
+ qAf:"Die figuur stel een geheel voor. Watter desimale breuk is gearseer?",
+ fa:"A strip divided into ten equal parts, four of them shaded.",faAf:"'n Strook wat in tien gelyke dele verdeel is, vier daarvan gearseer.",
+ fig:gGrid(10,1,["0,0","0,1","0,2","0,3"],30),
+ o:["0,04","4,0","0,4","0,14"],oAf:["0,04","4,0","0,4","0,14"],ci:2,
+ hi:"There are 10 equal parts and 4 are shaded.",hiAf:"Daar is 10 gelyke dele en 4 is gearseer.",
+ ex:"4 out of 10 = 4/10 = 0,4.",exAf:"4 uit 10 = 4/10 = 0,4."},
+
+{a:"NUM",ch:2,q:"The grid represents one whole. What percentage is shaded?",
+ qAf:"Die rooster stel een geheel voor. Watter persentasie is gearseer?",
+ fa:"A hundred-block grid with one full column and half of the next column shaded, fifteen blocks in all.",faAf:"'n Rooster van honderd blokkies met een volle kolom en die helfte van die volgende kolom gearseer, vyftien blokkies altesaam.",
+ fig:gGrid(10,10,(function(){const s=[];for(let r=0;r<10;r++){s.push(r+",0");if(r<5)s.push(r+",1");}return s;})(),16),
+ o:["1,5%","10%","20%","15%"],oAf:["1,5%","10%","20%","15%"],ci:3,
+ hi:"The whole grid has 100 blocks. Count the shaded ones.",hiAf:"Die hele rooster het 100 blokkies. Tel die gearseerdes.",
+ ex:"One full column (10) plus half of the next column (5) = 15 blocks out of 100 = 15%.",
+ exAf:"Een volle kolom (10) plus die helfte van die volgende kolom (5) = 15 blokkies uit 100 = 15%."},
+
+/* ---------- CHAPTER 2 · THE CHART ROOM · patterns, functions & algebra ---------- */
+{a:"ALG",ch:3,q:"What number comes out of the flow diagram when 119 goes in?",
+ qAf:"Watter getal kom uit die vloeidiagram wanneer 119 ingaan?",
+ fa:"A flow diagram: inputs 9, 44, 110 and 119 go through a plus 1 box and then a times 5 box, giving 50, 225, 555 and an unknown output.",faAf:"'n Vloeidiagram: insette 9, 44, 110 en 119 gaan deur 'n plus 1-blok en dan 'n maal 5-blok, wat 50, 225, 555 en 'n onbekende uitset gee.",
+ fig:gFlow([9,44,110,119],["+ 1","× 5"],[50,225,555,"?"]),
+ o:["600","595","604","596"],oAf:["600","595","604","596"],ci:0,
+ hi:"Do the two steps in order: first + 1, then × 5.",hiAf:"Doen die twee stappe in volgorde: eers + 1, dan × 5.",
+ ex:"119 + 1 = 120, and 120 × 5 = 600.",exAf:"119 + 1 = 120, en 120 × 5 = 600."},
+
+{a:"ALG",ch:3,q:"Write down the rule for this flow diagram.",qAf:"Skryf die reël vir hierdie vloeidiagram neer.",
+ fa:"A flow diagram with one unknown rule: 4 gives 48, 12 gives 144, 8 gives 96 and 5 gives 60.",faAf:"'n Vloeidiagram met een onbekende reël: 4 gee 48, 12 gee 144, 8 gee 96 en 5 gee 60.",
+ fig:gFlow([4,12,8,5],["?"],[48,144,96,60]),
+ o:["+ 44","× 12","× 10 + 8","× 4 + 32"],oAf:["+ 44","× 12","× 10 + 8","× 4 + 32"],ci:1,
+ hi:"Test your rule on every pair, not just the first one.",hiAf:"Toets jou reël op elke paar, nie net die eerste een nie.",
+ ex:"4 × 12 = 48; 12 × 12 = 144; 8 × 12 = 96; 5 × 12 = 60. The rule is × 12.",
+ exAf:"4 × 12 = 48; 12 × 12 = 144; 8 × 12 = 96; 5 × 12 = 60. Die reël is × 12."},
+
+{a:"ALG",ch:3,q:"Picture 1 has 1 small triangle, picture 2 has 4 and picture 3 has 9. How many small triangles will picture 8 have?",
+ qAf:"Prent 1 het 1 klein driehoek, prent 2 het 4 en prent 3 het 9. Hoeveel klein driehoeke sal prent 8 hê?",
+ fa:"Three pictures of a growing triangle pattern made of 1, 4 and 9 small triangles.",faAf:"Drie prente van 'n groeiende driehoekpatroon van 1, 4 en 9 klein driehoeke.",
+ fig:gTriPattern(),
+ o:["16","36","64","81"],oAf:["16","36","64","81"],ci:2,
+ hi:"1, 4, 9 are square numbers: 1×1, 2×2, 3×3.",hiAf:"1, 4, 9 is vierkantgetalle: 1×1, 2×2, 3×3.",
+ ex:"The rule is picture number × itself. Picture 8 → 8 × 8 = 64.",
+ exAf:"Die reël is prentnommer × homself. Prent 8 → 8 × 8 = 64."},
+
+{a:"ALG",ch:3,q:"The pattern grows by adding one more triangle to the strip. Figure 1 uses 3 matches, figure 2 uses 5 and figure 3 uses 7. How many matches are in figure 6?",
+ qAf:"Die patroon groei deur elke keer nog 'n driehoek by die strook te voeg. Figuur 1 gebruik 3 vuurhoutjies, figuur 2 gebruik 5 en figuur 3 gebruik 7. Hoeveel vuurhoutjies is in figuur 6?",
+ fa:"A strip of three triangles that share their sides, built from seven matches.",faAf:"'n Strook van drie driehoeke wat hul sye deel, gebou uit sewe vuurhoutjies.",
+ fig:gMatch(3),
+ o:["15","11","18","13"],oAf:["15","11","18","13"],ci:3,
+ hi:"Each new figure adds 2 matches.",hiAf:"Elke nuwe figuur voeg 2 vuurhoutjies by.",
+ ex:"3, 5, 7, 9, 11, 13. The rule is (figure × 2) + 1, so 6 × 2 + 1 = 13.",
+ exAf:"3, 5, 7, 9, 11, 13. Die reël is (figuur × 2) + 1, dus 6 × 2 + 1 = 13."},
+
+{a:"ALG",ch:3,q:"How many squares will there be in the 5th figure of this pattern?",
+ qAf:"Hoeveel vierkante sal daar in die 5de figuur van hierdie patroon wees?",
+ fa:"Three pictures of a growing staircase pattern made of 1, 3 and 6 squares.",faAf:"Drie prente van 'n groeiende trappatroon van 1, 3 en 6 vierkante.",
+ fig:gSquarePattern(),
+ o:["15","12","11","13"],oAf:["15","12","11","13"],ci:0,
+ hi:"The pattern goes 1, 3, 6 … you add one more each time.",hiAf:"Die patroon gaan 1, 3, 6 … jy tel elke keer een meer by.",
+ ex:"1 (+2) 3 (+3) 6 (+4) 10 (+5) 15. The 5th figure has 15 squares.",
+ exAf:"1 (+2) 3 (+3) 6 (+4) 10 (+5) 15. Die 5de figuur het 15 vierkante."},
+
+{a:"ALG",ch:3,q:"The teacher writes this pattern on the board:<br>2,50;  2,55;  2,60;  ____;  ____<br>Which numbers go in the blank spaces?",
+ qAf:"Die onderwyser skryf hierdie patroon op die bord:<br>2,50;  2,55;  2,60;  ____;  ____<br>Watter getalle kom in die oop spasies?",
+ o:["26,5;  27,0","2,65;  2,70","2,61;  2,62","265;  270"],oAf:["26,5;  27,0","2,65;  2,70","2,61;  2,62","265;  270"],ci:1,
+ hi:"How much is added each time?",hiAf:"Hoeveel word elke keer bygetel?",
+ ex:"The pattern adds 0,05 each time: 2,60 + 0,05 = 2,65 and 2,65 + 0,05 = 2,70.",
+ exAf:"Die patroon tel elke keer 0,05 by: 2,60 + 0,05 = 2,65 en 2,65 + 0,05 = 2,70."},
+
+{a:"ALG",ch:3,q:"What number goes in the block to make the number sentence true?<br>3 × ▢ + 5 = 26",
+ qAf:"Watter getal kom in die blokkie om die getalsin waar te maak?<br>3 × ▢ + 5 = 26",
+ o:["6","9","7","8"],oAf:["6","9","7","8"],ci:2,
+ hi:"Take the 5 away first, then divide by 3.",hiAf:"Trek eers die 5 af, deel dan deur 3.",
+ ex:"26 − 5 = 21 and 21 ÷ 3 = 7. Check: 3 × 7 + 5 = 26.",
+ exAf:"26 − 5 = 21 en 21 ÷ 3 = 7. Toets: 3 × 7 + 5 = 26."},
+
+{a:"ALG",ch:3,q:"Input: 2, 3, 4.  Output: 5, 7, 9.  What is the rule?",
+ qAf:"Inset: 2, 3, 4.  Uitset: 5, 7, 9.  Wat is die reël?",
+ o:["+ 3","× 3 − 1","× 2","× 2 + 1"],oAf:["+ 3","× 3 − 1","× 2","× 2 + 1"],ci:3,
+ hi:"The outputs go up by 2 while the inputs go up by 1.",hiAf:"Die uitsette styg met 2 terwyl die insette met 1 styg.",
+ ex:"2 × 2 + 1 = 5;  3 × 2 + 1 = 7;  4 × 2 + 1 = 9. (+ 3 only works for the first pair.)",
+ exAf:"2 × 2 + 1 = 5;  3 × 2 + 1 = 7;  4 × 2 + 1 = 9. (+ 3 werk net vir die eerste paar.)"},
+
+/* ---------- CHAPTER 3 · THE CAVE OF SHADOWS · space & shape ---------- */
+{a:"GEO",ch:4,nosh:1,q:"These figures are 2-D shapes. Which shape is a parallelogram?",
+ qAf:"Hierdie figure is 2D-vorms. Watter vorm is 'n parallelogram?",
+ fa:"Four shapes on a grid: 1 is a triangle, 2 is a trapezium, 3 is a parallelogram and 4 is a circle.",faAf:"Vier vorms op 'n rooster: 1 is 'n driehoek, 2 is 'n trapesium, 3 is 'n parallelogram en 4 is 'n sirkel.",
+ fig:gShapes2D(),
+ o:["1","2","3","4"],oAf:["1","2","3","4"],ci:2,
+ hi:"A parallelogram has two pairs of opposite sides that are parallel.",hiAf:"'n Parallelogram het twee pare teenoorstaande sye wat ewewydig is.",
+ ex:"Shape 3 has both pairs of opposite sides parallel and equal. Shape 2 is a trapezium — only one pair is parallel.",
+ exAf:"Vorm 3 se twee pare teenoorstaande sye is ewewydig en gelyk. Vorm 2 is 'n trapesium — net een paar is ewewydig."},
+
+{a:"GEO",ch:4,q:"What is true about <b>both</b> a tetrahedron (triangular-based pyramid) and a square-based pyramid?",
+ qAf:"Wat is waar van <b>albei</b> 'n tetraëder (driehoekige piramide) en 'n vierkantige piramide?",
+ fa:"A drawing of a square-based pyramid.",faAf:"'n Tekening van 'n vierkantige piramide.",
+ fig:gSolid("sqpyr"),
+ o:["They both have 12 edges.","Four faces of each object are triangular.","Both objects have a curved surface.","They both have 5 faces."],
+ oAf:["Albei het 12 ribbe.","Vier vlakke van elke voorwerp is driehoekig.","Albei voorwerpe het 'n geboë oppervlak.","Albei het 5 vlakke."],ci:1,
+ hi:"Count the triangular faces on each one.",hiAf:"Tel die driehoekige vlakke van elkeen.",
+ ex:"A tetrahedron has 4 triangular faces. A square-based pyramid has 4 triangular faces plus a square base. So 'four triangular faces' is true for both. The tetrahedron has only 4 faces and 6 edges, and neither has a curved surface.",
+ exAf:"'n Tetraëder het 4 driehoekige vlakke. 'n Vierkantige piramide het 4 driehoekige vlakke plus 'n vierkantige basis. Dus is 'vier driehoekige vlakke' waar vir albei. Die tetraëder het net 4 vlakke en 6 ribbe, en nie een het 'n geboë oppervlak nie."},
+
+{a:"GEO",ch:4,q:"Which 3-D object has one curved surface and two flat surfaces?",
+ qAf:"Watter 3D-voorwerp het een geboë oppervlak en twee plat oppervlaktes?",
+ fa:"A drawing of a cylinder.",faAf:"'n Tekening van 'n silinder.",
+ fig:gSolid("cyl"),
+ o:["a sphere","a cone","a cylinder","a pyramid"],oAf:["'n sfeer","'n keël","'n silinder","'n piramide"],ci:2,
+ hi:"Think about a tin of beans.",hiAf:"Dink aan 'n blik boontjies.",
+ ex:"A cylinder has a flat circle at the top, a flat circle at the bottom, and one curved surface around the outside. A cone has only one flat surface.",
+ exAf:"'n Silinder het 'n plat sirkel bo, 'n plat sirkel onder, en een geboë oppervlak rondom. 'n Keël het net een plat oppervlak."},
+
+{a:"GEO",ch:4,nosh:1,q:"The box is a cube and it has no lid. Which net can be folded to build this box?",
+ qAf:"Die boks is 'n kubus en het geen deksel nie. Watter net kan gevou word om hierdie boks te bou?",
+ fa:"Four nets of five squares each. A is a straight strip of five. B is a row of four with one square joined below the second. C is a two-by-two block with one extra square below the left. D is a staircase.",faAf:"Vier nette van vyf vierkante elk. A is 'n reguit strook van vyf. B is 'n ry van vier met een vierkant onder die tweede vas. C is 'n twee-by-twee blok met een ekstra vierkant onder links. D is 'n trap.",
+ fig:gNets(),
+ o:["A","B","C","D"],oAf:["A","B","C","D"],ci:1,
+ hi:"An open box needs a base and 4 walls, and the walls must wrap around without overlapping.",
+ hiAf:"'n Oop boks het 'n basis en 4 mure nodig, en die mure moet toevou sonder om te oorvleuel.",
+ ex:"Net B is a strip of 4 squares (the four walls) with one square attached to the middle as the base. In A, C and D the squares overlap or leave a gap when you fold them.",
+ exAf:"Net B is 'n strook van 4 vierkante (die vier mure) met een vierkant aan die middel vas as die basis. In A, C en D oorvleuel die vierkante of laat hulle 'n gaping wanneer jy vou."},
+
+{a:"GEO",ch:4,q:"How many vertices does a cube have?<br><span style='font-size:15px'>A vertex is a corner point where edges meet.</span>",
+ qAf:"Hoeveel hoekpunte het 'n kubus?<br><span style='font-size:15px'>'n Hoekpunt is 'n hoek waar ribbe bymekaarkom.</span>",
+ fa:"A drawing of a cube.",faAf:"'n Tekening van 'n kubus.",
+ fig:gSolid("cube"),
+ o:["8","4","6","12"],oAf:["8","4","6","12"],ci:0,
+ hi:"Count 4 corners on the top face and 4 on the bottom face.",hiAf:"Tel 4 hoeke op die boonste vlak en 4 op die onderste vlak.",
+ ex:"A cube has 8 vertices, 12 edges and 6 faces.",exAf:"'n Kubus het 8 hoekpunte, 12 ribbe en 6 vlakke."},
+
+{a:"GEO",ch:4,q:"How many edges does a triangular prism have?",qAf:"Hoeveel ribbe het 'n driehoekige prisma?",
+ fa:"A drawing of a triangular prism.",faAf:"'n Tekening van 'n driehoekige prisma.",
+ fig:gSolid("triprism"),
+ o:["5","9","6","12"],oAf:["5","9","6","12"],ci:1,
+ hi:"Count the two triangles, then the edges joining them.",hiAf:"Tel die twee driehoeke, dan die ribbe wat hulle verbind.",
+ ex:"Two triangles give 3 + 3 = 6 edges, plus 3 edges joining them = 9 edges.",
+ exAf:"Twee driehoeke gee 3 + 3 = 6 ribbe, plus 3 ribbe wat hulle verbind = 9 ribbe."},
+
+{a:"GEO",ch:4,nosh:1,q:"Reflect the shape in the dotted line. What does the shape look like now?",
+ qAf:"Weerkaats die vorm in die stippellyn. Hoe lyk die vorm nou?",
+ fa:"A flag shape to the left of a dotted vertical line, with its pennant at the top pointing right. Option A shows it moved to the right of the line, still pointing right. B shows it to the right of the line pointing left. C shows it to the left of the line with the pennant at the bottom. D shows it to the right of the line with the pennant at the bottom pointing left.",faAf:"'n Vlagvorm links van 'n vertikale stippellyn, met sy wimpel bo wat na regs wys. Opsie A wys dit regs van die lyn, steeds na regs. B wys dit regs van die lyn na links. C wys dit links van die lyn met die wimpel onder. D wys dit regs van die lyn met die wimpel onder wat na links wys.",
+ fig:gReflect(),
+ o:["A","B","C","D"],oAf:["A","B","C","D"],ci:1,
+ hi:"A mirror image points the other way, but stays the same distance from the line.",
+ hiAf:"'n Spieëlbeeld wys die ander kant toe, maar bly ewe ver van die lyn af.",
+ ex:"The original points to the right, so its mirror image points to the left and sits the same distance on the other side of the dotted line. That is B.",
+ exAf:"Die oorspronklike wys na regs, dus wys die spieëlbeeld na links en lê ewe ver aan die ander kant van die stippellyn. Dit is B."},
+
+{a:"GEO",ch:4,q:"Peter repeats one flag shape around a single point to make a star pattern. Which transformation does he use?",
+ qAf:"Peter herhaal een vlagvorm om 'n enkele punt om 'n sterpatroon te maak. Watter transformasie gebruik hy?",
+ o:["Rotation","Translation","Reflection"],oAf:["Rotasie","Translasie","Refleksie"],ci:0,
+ hi:"The shape turns around a point without flipping over.",hiAf:"Die vorm draai om 'n punt sonder om om te slaan.",
+ ex:"Turning a shape around a fixed point is a rotation. A translation slides it and a reflection flips it.",
+ exAf:"Om 'n vorm om 'n vaste punt te draai, is 'n rotasie. 'n Translasie skuif dit en 'n refleksie slaan dit om."},
+
+{a:"GEO",ch:4,nosh:1,q:"Which rectangle shows all its lines of symmetry correctly?",
+ qAf:"Watter reghoek wys al sy simmetrielyne korrek?",
+ fa:"Four identical rectangles. A has both diagonals drawn, B has a horizontal and a vertical line through the middle, C has a vertical line and one diagonal, D has one diagonal.",faAf:"Vier eenderse reghoeke. A het albei diagonale, B het 'n horisontale en 'n vertikale lyn deur die middel, C het 'n vertikale lyn en een diagonaal, D het een diagonaal.",
+ fig:gSymmetry(),
+ o:["A","B","C","D"],oAf:["A","B","C","D"],ci:1,
+ hi:"Fold the rectangle so that the two halves fit exactly on each other.",
+ hiAf:"Vou die reghoek sodat die twee helftes presies op mekaar pas.",
+ ex:"A rectangle that is not a square has exactly 2 lines of symmetry: one across and one down the middle. The diagonals are not lines of symmetry.",
+ exAf:"'n Reghoek wat nie 'n vierkant is nie, het presies 2 simmetrielyne: een dwars en een in die middel af. Die diagonale is nie simmetrielyne nie."},
+
+{a:"GEO",ch:4,q:"What do we call the angle shown here?",qAf:"Wat noem ons die hoek wat hier gewys word?",
+ fa:"Two lines meeting at a point, forming an angle a little wider than a square corner.",faAf:"Twee lyne wat by 'n punt ontmoet en 'n hoek vorm wat effens wyer is as 'n vierkantshoek.",
+ fig:gAngle(125),
+ o:["a right angle","an obtuse angle","a straight angle","an acute angle"],
+ oAf:["'n regte hoek","'n stomphoek","'n gestrekte hoek","'n skerphoek"],ci:1,
+ hi:"Compare it with the corner of a page, which is 90°.",hiAf:"Vergelyk dit met die hoek van 'n bladsy, wat 90° is.",
+ ex:"The angle is bigger than 90° but smaller than 180°, so it is obtuse.",
+ exAf:"Die hoek is groter as 90° maar kleiner as 180°, dus is dit 'n stomphoek."},
+
+{a:"GEO",ch:4,nosh:1,q:"Three blocks stand on the floor as shown. Which drawing shows the view from directly above?",
+ qAf:"Drie blokke staan op die vloer soos gewys. Watter tekening wys die aansig van reg bo af?",
+ fa:"Three cubes standing side by side on the floor in an L-shape, with four candidate plan views: A has four squares, B has two squares in a column, C has three squares in an L, D has two squares placed diagonally.",faAf:"Drie kubusse wat langs mekaar op die vloer in 'n L-vorm staan, met vier moontlike bo-aansigte: A het vier vierkante, B het twee vierkante in 'n kolom, C het drie vierkante in 'n L, D het twee vierkante diagonaal.",
+ fig:gStackTop(),
+ o:["A","B","C","D"],oAf:["A","B","C","D"],ci:2,
+ hi:"From above you see the top of every block, even if one is behind another.",
+ hiAf:"Van bo af sien jy die bokant van elke blok, selfs al is een agter 'n ander.",
+ ex:"All three blocks stand on the floor, so from above you see three squares in an L-shape. Only drawing C has three squares — A would need four blocks, and B and D only two.",
+ exAf:"Al drie blokke staan op die vloer, dus sien jy van bo af drie vierkante in 'n L-vorm. Net tekening C het drie vierkante — A sal vier blokke nodig hê, en B en D net twee."},
+
+/* ---------- CHAPTER 4 · TREASURE ISLAND · measurement ---------- */
+{a:"MEA",ch:5,q:"The side of each square is 1 cm. What is the perimeter of this rectangle?",
+ qAf:"Die sy van elke vierkant is 1 cm. Wat is die omtrek van hierdie reghoek?",
+ fa:"A rectangle on a square grid, nine squares long and four squares wide.",faAf:"'n Reghoek op 'n vierkantrooster, nege vierkante lank en vier vierkante breed.",
+ fig:gGrid(9,4,[],22),
+ o:["13 cm","22 cm","36 cm","26 cm"],oAf:["13 cm","22 cm","36 cm","26 cm"],ci:3,
+ hi:"Perimeter is the distance all the way around the outside.",hiAf:"Omtrek is die afstand heeltemal rondom die buitekant.",
+ ex:"The rectangle is 9 cm by 4 cm. Perimeter = 9 + 4 + 9 + 4 = 26 cm.",
+ exAf:"Die reghoek is 9 cm by 4 cm. Omtrek = 9 + 4 + 9 + 4 = 26 cm."},
+
+{a:"MEA",ch:5,q:"Each square is 1 cm². What is the area of the shaded figure?",
+ qAf:"Elke vierkant is 1 cm². Wat is die oppervlakte van die gearseerde figuur?",
+ fa:"A staircase figure shaded on a grid, with 1, 2, 3, 4 and 2 shaded squares in its five rows.",faAf:"'n Trapfiguur wat op 'n rooster gearseer is, met 1, 2, 3, 4 en 2 gearseerde vierkante in sy vyf rye.",
+ fig:gGrid(6,5,["0,0","1,0","1,1","2,0","2,1","2,2","3,0","3,1","3,2","3,3","4,0","4,1"],26),
+ o:["12 cm²","16 cm²","10 cm²","14 cm²"],oAf:["12 cm²","16 cm²","10 cm²","14 cm²"],ci:0,
+ hi:"Count the shaded blocks row by row: 1, 2, 3, 4, 2.",hiAf:"Tel die gearseerde blokkies ry vir ry: 1, 2, 3, 4, 2.",
+ ex:"1 + 2 + 3 + 4 + 2 = 12 shaded squares, so the area is 12 cm².",
+ exAf:"1 + 2 + 3 + 4 + 2 = 12 gearseerde vierkante, dus is die oppervlakte 12 cm²."},
+
+{a:"MEA",ch:5,q:"Calculate the volume of this rectangular prism.",qAf:"Bereken die volume van hierdie reghoekige prisma.",
+ fa:"A rectangular prism labelled 8 cm long, 3 cm wide and 5 cm high.",faAf:"'n Reghoekige prisma gemerk 8 cm lank, 3 cm breed en 5 cm hoog.",
+ fig:gPrism(8,3,5,"cm"),
+ o:["40 cm³","120 cm³","24 cm³","16 cm³"],oAf:["40 cm³","120 cm³","24 cm³","16 cm³"],ci:1,
+ hi:"Volume = length × breadth × height.",hiAf:"Volume = lengte × breedte × hoogte.",
+ ex:"8 × 3 × 5 = 120 cm³.",exAf:"8 × 3 × 5 = 120 cm³."},
+
+{a:"MEA",ch:5,q:"How many 1 cm cubes fit into this box?",qAf:"Hoeveel 1 cm-kubusse pas in hierdie boks?",
+ fa:"An open box labelled 9 cm long, 3 cm wide and 1 cm high, next to a single 1 cm cube.",faAf:"'n Oop boks gemerk 9 cm lank, 3 cm breed en 1 cm hoog, langs 'n enkele 1 cm-kubus.",
+ fig:gUnitBox(9,3,1),
+ o:["30","13","27","18"],oAf:["30","13","27","18"],ci:2,
+ hi:"Work out how many cubes fit along each edge, then multiply.",hiAf:"Werk uit hoeveel kubusse langs elke rand pas, en vermenigvuldig dan.",
+ ex:"9 × 3 × 1 = 27 cubes.",exAf:"9 × 3 × 1 = 27 kubusse."},
+
+{a:"MEA",ch:5,q:"Complete:  2 500 g = ______ kg",qAf:"Voltooi:  2 500 g = ______ kg",
+ o:["0,25 kg","250 kg","25 kg","2,5 kg"],oAf:["0,25 kg","250 kg","25 kg","2,5 kg"],ci:3,
+ hi:"There are 1 000 g in 1 kg.",hiAf:"Daar is 1 000 g in 1 kg.",
+ ex:"2 500 ÷ 1 000 = 2,5 kg.",exAf:"2 500 ÷ 1 000 = 2,5 kg."},
+
+{a:"MEA",ch:5,q:"How much water is in this jug?",qAf:"Hoeveel water is in hierdie beker?",
+ fa:"A measuring jug with four equally spaced marks. The top mark is labelled 2 litres and the water stands level with the second mark from the bottom.",faAf:"'n Maatbeker met vier gelyk gespasieerde merke. Die boonste merk is 2 liter gemerk en die water staan gelyk met die tweede merk van onder.",
+ fig:gJug(0.5,"2 ℓ"),
+ o:["1 ℓ","1,5 ℓ","2 ℓ","0,5 ℓ"],oAf:["1 ℓ","1,5 ℓ","2 ℓ","0,5 ℓ"],ci:0,
+ hi:"Work out what one mark is worth first.",hiAf:"Werk eers uit hoeveel een merk werd is.",
+ ex:"The top mark is 2 ℓ and there are 4 equal marks, so each mark is 0,5 ℓ. The water reaches the second mark: 0,5 + 0,5 = 1 ℓ.",
+ exAf:"Die boonste merk is 2 ℓ en daar is 4 gelyke merke, dus is elke merk 0,5 ℓ. Die water bereik die tweede merk: 0,5 + 0,5 = 1 ℓ."},
+
+{a:"MEA",ch:5,q:"Herman ran a 10 km race. A sign says he has only 1 400 metres to go. How many metres had he run?",
+ qAf:"Herman het 'n 10 km-wedloop gehardloop. 'n Bord sê hy het net 1 400 meter oor. Hoeveel meter het hy gehardloop?",
+ o:["1 400 m","8 600 m","8 400 m","9 600 m"],oAf:["1 400 m","8 600 m","8 400 m","9 600 m"],ci:1,
+ hi:"First change 10 km into metres.",hiAf:"Verander eers 10 km na meter.",
+ ex:"10 km = 10 000 m. 10 000 − 1 400 = 8 600 m.",exAf:"10 km = 10 000 m. 10 000 − 1 400 = 8 600 m."},
+
+{a:"MEA",ch:5,q:"How many hours are there in 180 minutes?",qAf:"Hoeveel uur is daar in 180 minute?",
+ o:["4 hours","2 hours","3 hours","1,8 hours"],oAf:["4 uur","2 uur","3 uur","1,8 uur"],ci:2,
+ hi:"There are 60 minutes in an hour.",hiAf:"Daar is 60 minute in 'n uur.",
+ ex:"180 ÷ 60 = 3 hours.",exAf:"180 ÷ 60 = 3 uur."},
+
+{a:"MEA",ch:5,q:"A flight was expected at Cape Town International at 20:40. It was delayed by two hours. What is the new expected arrival time?",
+ qAf:"'n Vlug is om 20:40 by Kaapstad Internasionaal verwag. Dit is met twee uur vertraag. Wat is die nuwe verwagte aankomstyd?",
+ o:["20:42","23:40","18:40","22:40"],oAf:["20:42","23:40","18:40","22:40"],ci:3,
+ hi:"Add 2 to the hours. The minutes do not change.",hiAf:"Tel 2 by die ure. Die minute verander nie.",
+ ex:"20:40 + 2 hours = 22:40.",exAf:"20:40 + 2 uur = 22:40."},
+
+{a:"MEA",ch:5,q:"Bongani drove 1 200 km in 15 hours. What was his average speed?",
+ qAf:"Bongani het 1 200 km in 15 uur gery. Wat was sy gemiddelde spoed?",
+ o:["80 km/h","120 km/h","70 km/h","90 km/h"],oAf:["80 km/h","120 km/h","70 km/h","90 km/h"],ci:0,
+ hi:"Speed = distance ÷ time.",hiAf:"Spoed = afstand ÷ tyd.",
+ ex:"1 200 ÷ 15 = 80 km/h.",exAf:"1 200 ÷ 15 = 80 km/h."},
+
+{a:"MEA",ch:5,q:"A car travels 630 km from Johannesburg to Durban in 7 hours. What is its average speed?",
+ qAf:"'n Motor ry 630 km van Johannesburg na Durban in 7 uur. Wat is sy gemiddelde spoed?",
+ o:["80 km/h","90 km/h","100 km/h","70 km/h"],oAf:["80 km/h","90 km/h","100 km/h","70 km/h"],ci:1,
+ hi:"Divide the distance by the time.",hiAf:"Deel die afstand deur die tyd.",
+ ex:"630 ÷ 7 = 90 km/h.",exAf:"630 ÷ 7 = 90 km/h."},
+
+{a:"MEA",ch:5,q:"Nomathole has a piece of cardboard 29,7 cm long and 10 cm wide. She makes bookmarks that are each 10 cm long and 4 cm wide. What is the largest number of bookmarks she can cut?",
+ qAf:"Nomathole het 'n stuk karton wat 29,7 cm lank en 10 cm breed is. Sy maak boekmerke wat elk 10 cm lank en 4 cm breed is. Wat is die grootste aantal boekmerke wat sy kan uitsny?",
+ fa:"A strip of cardboard divided into equal pieces, with six full pieces marked off and a short piece left over.",faAf:"'n Strook karton wat in gelyke stukke verdeel is, met ses volle stukke afgemerk en 'n kort stukkie wat oorbly.",
+ fig:gGrid(7,1,["0,0","0,1","0,2","0,3","0,4","0,5"],30),
+ o:["0","9","7","8"],oAf:["0","9","7","8"],ci:2,
+ hi:"The 10 cm side fits the 10 cm width exactly. Now share 29,7 cm into 4 cm strips.",
+ hiAf:"Die 10 cm-sy pas presies by die 10 cm-breedte. Deel nou 29,7 cm in stroke van 4 cm.",
+ ex:"29,7 ÷ 4 = 7,4. She can cut 7 whole bookmarks, and 1,7 cm of cardboard is left over.",
+ exAf:"29,7 ÷ 4 = 7,4. Sy kan 7 heel boekmerke uitsny, en 1,7 cm karton bly oor."},
+
+{a:"MEA",ch:5,q:"A school has a perimeter of 1 500 m. Two gates of 3 m each are built into the fence. One piece of fencing is 2 m long. How many pieces of fencing are needed?",
+ qAf:"'n Skool het 'n omtrek van 1 500 m. Twee hekke van 3 m elk word in die heining gebou. Een stuk heining is 2 m lank. Hoeveel stukke heining word benodig?",
+ o:["744","753","750","747"],oAf:["744","753","750","747"],ci:3,
+ hi:"Take the gates out of the perimeter before you divide.",hiAf:"Trek die hekke uit die omtrek uit voor jy deel.",
+ ex:"Two gates take up 2 × 3 = 6 m. 1 500 − 6 = 1 494 m of fencing. 1 494 ÷ 2 = 747 pieces.",
+ exAf:"Twee hekke neem 2 × 3 = 6 m. 1 500 − 6 = 1 494 m heining. 1 494 ÷ 2 = 747 stukke."},
+
+/* ---------- CHAPTER 5 · THE PIRATE COUNCIL · data handling ---------- */
+{a:"DAT",ch:6,q:"The graph shows the number of learners in the Foundation Phase. How many girls were in Grade 1?",
+ qAf:"Die grafiek wys die getal leerders in die Grondslagfase. Hoeveel meisies was in Graad 1?",
+ fa:"A bar graph of Foundation Phase learners. Girls and boys are shown side by side for each grade: Gr R 100 and 100, Gr 1 400 and 800, Gr 2 300 and 450, Gr 3 400 and 500.",faAf:"'n Staafgrafiek van Grondslagfase-leerders. Meisies en seuns word langs mekaar vir elke graad gewys: Gr R 100 en 100, Gr 1 400 en 800, Gr 2 300 en 450, Gr 3 400 en 500.",
+ fig:gBar([{l:"Gr R",a:100,b:100},{l:"Gr 1",a:400,b:800},{l:"Gr 2",a:300,b:450},{l:"Gr 3",a:400,b:500}],1000,200,"Number of learners","Girls","Boys"),
+ o:["400","100","800","300"],oAf:["400","100","800","300"],ci:0,
+ hi:"The solid black bars are the girls. Find the Gr 1 pair.",hiAf:"Die soliede swart stawe is die meisies. Kry die Gr 1-paar.",
+ ex:"The solid bar above Gr 1 reaches 400, so there were 400 girls.",
+ exAf:"Die soliede staaf bo Gr 1 bereik 400, dus was daar 400 meisies."},
+
+{a:"DAT",ch:6,q:"Using the same graph: how many learners in total were in Grade 2?",
+ qAf:"Met dieselfde grafiek: hoeveel leerders in totaal was in Graad 2?",
+ fa:"The same bar graph of Foundation Phase learners, girls and boys side by side for each grade.",faAf:"Dieselfde staafgrafiek van Grondslagfase-leerders, meisies en seuns langs mekaar vir elke graad.",
+ fig:gBar([{l:"Gr R",a:100,b:100},{l:"Gr 1",a:400,b:800},{l:"Gr 2",a:300,b:450},{l:"Gr 3",a:400,b:500}],1000,200,"Number of learners","Girls","Boys"),
+ o:["450","750","150","300"],oAf:["450","750","150","300"],ci:1,
+ hi:"Add the girls and the boys together.",hiAf:"Tel die meisies en die seuns saam.",
+ ex:"300 girls + 450 boys = 750 learners.",exAf:"300 meisies + 450 seuns = 750 leerders."},
+
+{a:"DAT",ch:6,q:"Kevin threw a dice many times.<br>1→15   2→20   3→18   4→14   5→15   6→18<br>Which number showed up the most times?",
+ qAf:"Kevin het baie kere met 'n dobbelsteen gegooi.<br>1→15   2→20   3→18   4→14   5→15   6→18<br>Watter getal het die meeste kere opgekom?",
+ o:["6","20","2","3"],oAf:["6","20","2","3"],ci:2,
+ hi:"Look for the biggest count, then read off which number it belongs to.",
+ hiAf:"Soek die grootste telling, en lees dan af aan watter getal dit behoort.",
+ ex:"The largest count is 20, and that belongs to the number 2. (20 is how often, not which number.)",
+ exAf:"Die grootste telling is 20, en dit behoort aan die getal 2. (20 is hoe dikwels, nie watter getal nie.)"},
+
+{a:"DAT",ch:6,q:"Using Kevin's table: how many times in total did he throw the dice?",
+ qAf:"Met Kevin se tabel: hoeveel keer in totaal het hy met die dobbelsteen gegooi?",
+ o:["110","20","90","100"],oAf:["110","20","90","100"],ci:3,
+ hi:"Add all six counts: 15 + 20 + 18 + 14 + 15 + 18.",hiAf:"Tel al ses tellings op: 15 + 20 + 18 + 14 + 15 + 18.",
+ ex:"15 + 20 + 18 + 14 + 15 + 18 = 100 throws.",exAf:"15 + 20 + 18 + 14 + 15 + 18 = 100 gooie."},
+
+{a:"DAT",ch:6,q:"What fraction of Kevin's 100 throws showed a 2?",qAf:"Watter breuk van Kevin se 100 gooie het 'n 2 gewys?",
+ o:[fr(1,5),fr(2,10),fr(1,2),fr(1,20)],oAf:[fr(1,5),fr(2,10),fr(1,2),fr(1,20)],ci:0,
+ hi:"Write it as 20 out of 100, then simplify.",hiAf:"Skryf dit as 20 uit 100, en vereenvoudig dan.",
+ ex:"20/100 = 1/5 (divide top and bottom by 20).",exAf:"20/100 = 1/5 (deel bo en onder deur 20)."},
+
+{a:"DAT",ch:6,q:"What fraction of the circles is shaded?",qAf:"Watter breuk van die sirkels is gearseer?",
+ fa:"Ten circles in two rows of five, with three of them shaded.",faAf:"Tien sirkels in twee rye van vyf, met drie daarvan gearseer.",
+ fig:gCircles(10,[0,4,7],5),
+ o:[fr(3,7),fr(3,10),fr(7,10),fr(1,3)],oAf:[fr(3,7),fr(3,10),fr(7,10),fr(1,3)],ci:1,
+ hi:"Count the shaded circles, then count all the circles.",hiAf:"Tel die gearseerde sirkels, tel dan al die sirkels.",
+ ex:"3 circles are shaded out of 10 altogether, so 3/10.",exAf:"3 sirkels is gearseer uit 10 altesaam, dus 3/10."},
+
+{a:"DAT",ch:6,nosh:1,q:"A class recorded their favourite fruit: 80 chose apples (App), 160 bananas (Ban), 60 grapes (Dru) and 100 oranges (Lem). Which pie chart best shows this data?",
+ qAf:"'n Klas het hul gunstelingvrugte aangeteken: 80 het appels (App) gekies, 160 piesangs (Ban), 60 druiwe (Dru) en 100 lemoene (Lem). Watter sirkelgrafiek wys hierdie data die beste?",
+ fa:"Three pie charts labelled A, B and C. A has slices of 80, 160, 60 and 100. B has 160, 80, 100 and 60. C has four equal slices of 100.",faAf:"Drie sirkelgrafieke gemerk A, B en C. A het sektore van 80, 160, 60 en 100. B het 160, 80, 100 en 60. C het vier gelyke sektore van 100.",
+ fig:`<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+   <div>${gPie([80,160,60,100],["App|80","Ban|160","Dru|60","Lem|100"],142)}<div style="font-size:16px;font-weight:bold">A</div></div>
+   <div>${gPie([160,80,100,60],["App|160","Ban|80","Dru|100","Lem|60"],142)}<div style="font-size:16px;font-weight:bold">B</div></div>
+   <div>${gPie([100,100,100,100],["App|100","Ban|100","Dru|100","Lem|100"],142)}<div style="font-size:16px;font-weight:bold">C</div></div></div>`,
+ o:["A","B","C"],oAf:["A","B","C"],ci:0,
+ hi:"The biggest slice must be bananas, and the smallest must be grapes.",
+ hiAf:"Die grootste sektor moet piesangs wees, en die kleinste moet druiwe wees.",
+ ex:"Bananas (160) is the biggest group and grapes (60) the smallest, so the slices must match those sizes. Chart C shows four equal slices, which would mean 100 of each.",
+ exAf:"Piesangs (160) is die grootste groep en druiwe (60) die kleinste, dus moet die sektore by daardie groottes pas. Grafiek C wys vier gelyke sektore, wat 100 van elk sou beteken."},
+
+{a:"DAT",ch:6,q:"What is the mode of this data set?<br>3;  5;  2;  5;  7;  5;  9",
+ qAf:"Wat is die modus van hierdie datastel?<br>3;  5;  2;  5;  7;  5;  9",
+ o:["7","3","9","5"],oAf:["7","3","9","5"],ci:3,
+ hi:"The mode is the value that appears most often.",hiAf:"Die modus is die waarde wat die meeste voorkom.",
+ ex:"5 appears three times, more than any other value, so the mode is 5.",
+ exAf:"5 kom drie keer voor, meer as enige ander waarde, dus is die modus 5."}
+];
+
+
+/* ============================================================
+   SECTION: CHAPTERS & SCENE ART
+   ============================================================ */
+const AREA_NAME = {
+  NUM:{en:"Numbers, Operations and Relationships",af:"Getalle, Bewerkings en Verwantskappe"},
+  ALG:{en:"Patterns, Functions and Algebra",af:"Patrone, Funksies en Algebra"},
+  GEO:{en:"Space and Shape",af:"Ruimte en Vorm"},
+  MEA:{en:"Measurement",af:"Meting"},
+  DAT:{en:"Data Handling",af:"Datahantering"}
+};
+
+function scene(body, w, h) {
+  return `<svg viewBox="0 0 ${w||640} ${h||210}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:auto;display:block">${body}</svg>`;
+}
+const SKY = `<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0%" stop-color="#123c52"/><stop offset="55%" stop-color="#1f6b7d"/><stop offset="100%" stop-color="#e9a45c"/></linearGradient>
+  <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0%" stop-color="#06202e"/><stop offset="100%" stop-color="#0d4257"/></linearGradient></defs>`;
+
+const moon = (x,y,r)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#f4ecd8" opacity=".9"/>`;
+const waves = (y)=>{let s="";for(let i=0;i<9;i++){const x=i*74+10;s+=`<path d="M${x} ${y} q18 -7 36 0 q18 7 36 0" fill="none" stroke="#9fd8d0" stroke-width="2" opacity=".45"/>`;}return s;};
+const palm = (x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})">
+  <path d="M0 0 q-6 -34 4 -62" stroke="#3b2a15" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M4 -62 q-30 -10 -42 4 M4 -62 q30 -12 44 2 M4 -62 q-12 -26 -32 -30 M4 -62 q16 -24 36 -24" stroke="#1f6d54" stroke-width="7" fill="none" stroke-linecap="round"/></g>`;
+const ship = (x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})">
+  <path d="M-58 0 L58 0 L42 22 L-42 22 Z" fill="#2a1a0e"/>
+  <rect x="-3" y="-72" width="6" height="72" fill="#2a1a0e"/>
+  <path d="M3 -68 L46 -42 L3 -30 Z" fill="#efdfbb"/><path d="M-3 -62 L-40 -40 L-3 -28 Z" fill="#d8c294"/>
+  <path d="M3 -24 L40 -6 L3 2 Z" fill="#efdfbb"/></g>`;
+
+const CHAPTERS = [
+  { key:"docks", area:"NUM",
+    name:{en:"Thornbay Docks",af:"Doringbaai se Hawe"},
+    blurb:{en:"Whole numbers, operations and rounding",af:"Heelgetalle, bewerkings en afronding"},
+    talk:{en:"The harbour master will not sign your pirate papers until you can count a cargo without losing a crate. Ten questions. No abacus.",
+          af:"Die hawemeester teken nie jou seerowerspapiere nie voordat jy 'n vrag kan tel sonder om 'n kis te verloor nie. Tien vrae. Geen telraam nie."},
+    icon:`<svg viewBox="0 0 52 52"><rect x="6" y="26" width="40" height="18" fill="#6b4526" stroke="#2b1a0d" stroke-width="2"/><rect x="12" y="14" width="14" height="12" fill="#e0a828" stroke="#2b1a0d" stroke-width="2"/><rect x="28" y="8" width="14" height="18" fill="#d8c294" stroke="#2b1a0d" stroke-width="2"/></svg>`,
+    scene:()=>scene(SKY+`<rect width="640" height="210" fill="url(#sky)"/>${moon(552,44,22)}
+      <rect y="150" width="640" height="60" fill="#0e3a4d"/>${waves(162)}
+      ${ship(150,150,1)}
+      <rect x="330" y="140" width="290" height="14" fill="#6b4526"/>
+      <rect x="352" y="152" width="10" height="40" fill="#4a2f1b"/><rect x="470" y="152" width="10" height="40" fill="#4a2f1b"/><rect x="586" y="152" width="10" height="40" fill="#4a2f1b"/>
+      <rect x="376" y="104" width="44" height="36" fill="#8a5c34" stroke="#2b1a0d" stroke-width="2"/>
+      <rect x="426" y="114" width="34" height="26" fill="#a8763f" stroke="#2b1a0d" stroke-width="2"/>
+      <rect x="500" y="98" width="52" height="42" fill="#7a4f2c" stroke="#2b1a0d" stroke-width="2"/>`) },
+
+  { key:"store", area:"NUM",
+    name:{en:"The Ship's Store",af:"Die Skeepswinkel"},
+    blurb:{en:"Decimal fractions and money",af:"Desimale breuke en geld"},
+    talk:{en:"The storekeeper weighs everything to three decimal places and rounds in her own favour. Check her sums.",
+          af:"Die winkelier weeg alles tot drie desimale plekke en rond in haar eie guns af. Kontroleer haar somme."},
+    icon:`<svg viewBox="0 0 52 52"><rect x="8" y="18" width="36" height="26" fill="#8a5c34" stroke="#2b1a0d" stroke-width="2"/><path d="M4 18 L26 6 L48 18 Z" fill="#d2553c" stroke="#2b1a0d" stroke-width="2"/><rect x="20" y="28" width="12" height="16" fill="#e0a828" stroke="#2b1a0d" stroke-width="2"/></svg>`,
+    scene:()=>scene(SKY+`<rect width="640" height="210" fill="url(#night)"/>${moon(80,40,18)}
+      <rect y="168" width="640" height="42" fill="#3a2415"/>
+      <rect x="150" y="60" width="340" height="110" fill="#4a2f1b" stroke="#21140a" stroke-width="3"/>
+      <path d="M130 62 L320 18 L510 62 Z" fill="#d2553c" stroke="#21140a" stroke-width="3"/>
+      <rect x="196" y="96" width="60" height="48" fill="#e6c98a" stroke="#21140a" stroke-width="2"/>
+      <rect x="290" y="96" width="60" height="48" fill="#e6c98a" stroke="#21140a" stroke-width="2"/>
+      <rect x="388" y="86" width="56" height="84" fill="#2b1a0d" stroke="#21140a" stroke-width="2"/>
+      <circle cx="404" cy="130" r="4" fill="#e0a828"/>
+      <circle cx="226" cy="120" r="12" fill="#e0a828" opacity=".65"/><circle cx="320" cy="120" r="12" fill="#e0a828" opacity=".65"/>`) },
+
+  { key:"market", area:"NUM",
+    name:{en:"The Market Square",af:"Die Markplein"},
+    blurb:{en:"Fractions, percentages and ratio",af:"Breuke, persentasies en verhoudings"},
+    talk:{en:"Every trader here swears their price is a third off. Two of them are lying, and one cannot add eighths.",
+          af:"Elke handelaar hier sweer sy prys is 'n derde af. Twee van hulle jok, en een kan nie agstes optel nie."},
+    icon:`<svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="20" fill="#efdfbb" stroke="#2b1a0d" stroke-width="2"/><path d="M26 26 L26 6 A20 20 0 0 1 43 36 Z" fill="#e0a828" stroke="#2b1a0d" stroke-width="2"/></svg>`,
+    scene:()=>scene(SKY+`<rect width="640" height="210" fill="url(#sky)"/>
+      <rect y="170" width="640" height="40" fill="#8a6a3f"/>
+      ${palm(70,172,1.1)}${palm(590,176,.9)}
+      <g><rect x="150" y="104" width="120" height="66" fill="#6b4526" stroke="#2b1a0d" stroke-width="2"/><path d="M140 104 L210 76 L280 104 Z" fill="#3fb8a0" stroke="#2b1a0d" stroke-width="2"/></g>
+      <g><rect x="300" y="112" width="110" height="58" fill="#7a4f2c" stroke="#2b1a0d" stroke-width="2"/><path d="M292 112 L355 84 L418 112 Z" fill="#d2553c" stroke="#2b1a0d" stroke-width="2"/></g>
+      <g><rect x="436" y="106" width="104" height="64" fill="#6b4526" stroke="#2b1a0d" stroke-width="2"/><path d="M428 106 L488 78 L548 106 Z" fill="#e0a828" stroke="#2b1a0d" stroke-width="2"/></g>
+      <circle cx="180" cy="140" r="9" fill="#d2553c"/><circle cx="204" cy="140" r="9" fill="#e0a828"/><circle cx="228" cy="140" r="9" fill="#3fb8a0"/>`) },
+
+  { key:"chart", area:"ALG",
+    name:{en:"The Chart Room",af:"Die Kaartkamer"},
+    blurb:{en:"Patterns, flow diagrams and number sentences",af:"Patrone, vloeidiagramme en getalsinne"},
+    talk:{en:"The old navigator hid the route inside a pattern. Break the rule and the map reads itself.",
+          af:"Die ou navigator het die roete binne 'n patroon weggesteek. Kraak die reël en die kaart lees homself."},
+    icon:`<svg viewBox="0 0 52 52"><rect x="6" y="8" width="40" height="36" fill="#efdfbb" stroke="#2b1a0d" stroke-width="2"/><path d="M12 36 L22 20 L30 30 L42 14" fill="none" stroke="#d2553c" stroke-width="3"/></svg>`,
+    scene:()=>scene(SKY+`<rect width="640" height="210" fill="#123141"/>
+      <rect x="0" y="0" width="640" height="210" fill="#0b2735"/>
+      <rect x="60" y="30" width="230" height="150" fill="#efdfbb" stroke="#3a2415" stroke-width="4" transform="rotate(-3 175 105)"/>
+      <path d="M96 140 q40 -50 90 -26 q46 22 84 -20" fill="none" stroke="#8a5c34" stroke-width="3" stroke-dasharray="8 6" transform="rotate(-3 175 105)"/>
+      <path d="M250 62 l10 18 l-10 18 l-10 -18 Z" fill="#d2553c" transform="rotate(-3 175 105)"/>
+      <circle cx="470" cy="104" r="58" fill="#1a4d60" stroke="#e0a828" stroke-width="5"/>
+      <circle cx="470" cy="104" r="6" fill="#e0a828"/>
+      <path d="M470 104 L500 66" stroke="#efdfbb" stroke-width="4"/>
+      <path d="M470 46 L470 54 M470 154 L470 162 M412 104 L420 104 M520 104 L528 104" stroke="#e0a828" stroke-width="4"/>
+      <rect x="0" y="182" width="640" height="28" fill="#3a2415"/>`) },
+
+  { key:"cave", area:"GEO",
+    name:{en:"The Cave of Shadows",af:"Die Grot van Skaduwees"},
+    blurb:{en:"2-D shapes, 3-D objects and transformations",af:"2D-vorms, 3D-voorwerpe en transformasies"},
+    talk:{en:"Shapes on the wall move when the torch moves. Name them correctly and the tunnel opens.",
+          af:"Vorms teen die muur beweeg wanneer die fakkel beweeg. Benoem hulle korrek en die tonnel gaan oop."},
+    icon:`<svg viewBox="0 0 52 52"><polygon points="26,6 46,42 6,42" fill="#3fb8a0" stroke="#2b1a0d" stroke-width="2"/><rect x="18" y="24" width="16" height="16" fill="#e0a828" stroke="#2b1a0d" stroke-width="2"/></svg>`,
+    scene:()=>scene(SKY+`<rect width="640" height="210" fill="#08161f"/>
+      <path d="M0 210 L0 40 Q140 -18 300 30 Q470 82 640 22 L640 210 Z" fill="#12303c"/>
+      <path d="M0 210 L0 96 Q150 60 290 100 Q440 144 640 96 L640 210 Z" fill="#0a1f2a"/>
+      <circle cx="320" cy="122" r="66" fill="#e0a828" opacity=".14"/>
+      <circle cx="320" cy="122" r="34" fill="#e0a828" opacity=".2"/>
+      <polygon points="230,150 268,96 306,150" fill="#0d2b36" stroke="#3fb8a0" stroke-width="2"/>
+      <rect x="330" y="108" width="46" height="46" fill="#0d2b36" stroke="#3fb8a0" stroke-width="2"/>
+      <circle cx="424" cy="130" r="24" fill="#0d2b36" stroke="#3fb8a0" stroke-width="2"/>
+      <rect x="150" y="60" width="8" height="34" fill="#6b4526" transform="rotate(18 154 77)"/>
+      <circle cx="166" cy="56" r="11" fill="#e0a828"/>`) },
+
+  { key:"island", area:"MEA",
+    name:{en:"Skull Bay",af:"Skedelbaai"},
+    blurb:{en:"Length, area, volume, mass, capacity, time and speed",af:"Lengte, oppervlakte, volume, massa, kapasiteit, tyd en spoed"},
+    talk:{en:"The treasure is buried exactly where the measurements say. Measure badly and you will dig up a boot.",
+          af:"Die skat is presies begrawe waar die metings sê. Meet swak en jy grawe 'n stewel op."},
+    icon:`<svg viewBox="0 0 52 52"><path d="M6 40 q20 -30 40 0" fill="#c9a24a" stroke="#2b1a0d" stroke-width="2"/><path d="M14 20 L38 44 M38 20 L14 44" stroke="#d2553c" stroke-width="4"/></svg>`,
+    scene:()=>scene(SKY+`<rect width="640" height="210" fill="url(#sky)"/>${moon(80,42,20)}
+      <rect y="150" width="640" height="60" fill="#0e3a4d"/>${waves(160)}
+      <path d="M110 178 q120 -70 250 -34 q90 24 170 34 Z" fill="#c9a24a"/>
+      <path d="M110 178 q120 -70 250 -34" fill="none" stroke="#a8823a" stroke-width="3"/>
+      ${palm(230,150,1.3)}${palm(420,158,1)}
+      <path d="M330 152 L358 180 M358 152 L330 180" stroke="#2b1a0d" stroke-width="6"/>
+      ${ship(560,146,.7)}`) },
+
+  { key:"council", area:"DAT",
+    name:{en:"The Pirate Council",af:"Die Seerowersraad"},
+    blurb:{en:"Graphs, tables and interpreting data",af:"Grafieke, tabelle en die interpretasie van data"},
+    talk:{en:"The Council votes on everything and records all of it. Read their tables properly or you will be voted overboard.",
+          af:"Die Raad stem oor alles en teken alles aan. Lees hul tabelle behoorlik of jy word oorboord gestem."},
+    icon:`<svg viewBox="0 0 52 52"><rect x="8" y="28" width="9" height="16" fill="#3fb8a0" stroke="#2b1a0d" stroke-width="2"/><rect x="21" y="16" width="9" height="28" fill="#e0a828" stroke="#2b1a0d" stroke-width="2"/><rect x="34" y="22" width="9" height="22" fill="#d2553c" stroke="#2b1a0d" stroke-width="2"/></svg>`,
+    scene:()=>scene(SKY+`<rect width="640" height="210" fill="#0b2735"/>
+      <rect x="0" y="176" width="640" height="34" fill="#3a2415"/>
+      <rect x="60" y="36" width="520" height="140" fill="#12303c" stroke="#3a2415" stroke-width="4"/>
+      <rect x="96" y="120" width="34" height="46" fill="#3fb8a0"/><rect x="146" y="92" width="34" height="74" fill="#e0a828"/>
+      <rect x="196" y="106" width="34" height="60" fill="#d2553c"/><rect x="246" y="76" width="34" height="90" fill="#efdfbb"/>
+      <line x1="86" y1="166" x2="300" y2="166" stroke="#efdfbb" stroke-width="3"/>
+      <line x1="86" y1="66" x2="86" y2="166" stroke="#efdfbb" stroke-width="3"/>
+      <circle cx="446" cy="106" r="54" fill="#0b2735" stroke="#efdfbb" stroke-width="3"/>
+      <path d="M446 106 L446 52 A54 54 0 0 1 494 132 Z" fill="#e0a828"/>
+      <path d="M446 106 L494 132 A54 54 0 0 1 408 155 Z" fill="#3fb8a0"/>`) }
+];
+
+/* ---------- avatar & shop ---------- */
+const SHOP = [
+  {id:"hat",   cost:40, name:{en:"Captain's hat",af:"Kapteinshoed"}},
+  {id:"parrot",cost:60, name:{en:"Shoulder parrot",af:"Skouerpapegaai"}},
+  {id:"coat",  cost:80, name:{en:"Red coat",af:"Rooi jas"}},
+  {id:"spy",   cost:50, name:{en:"Spyglass",af:"Verkyker"}}
+];
+function avatarSVG(own, size) {
+  own = own || [];
+  let b = `<rect width="120" height="130" fill="none"/>`;
+  b += own.indexOf("coat")>-1
+    ? `<path d="M34 66 L86 66 L94 122 L26 122 Z" fill="#c23b26" stroke="#2b1a0d" stroke-width="2"/>`
+    : `<path d="M34 66 L86 66 L92 122 L28 122 Z" fill="#2f6f7e" stroke="#2b1a0d" stroke-width="2"/>`;
+  b += `<circle cx="60" cy="44" r="22" fill="#e8c9a0" stroke="#2b1a0d" stroke-width="2"/>
+        <circle cx="52" cy="42" r="3" fill="#2b1a0d"/><circle cx="68" cy="42" r="3" fill="#2b1a0d"/>
+        <path d="M50 54 q10 8 20 0" fill="none" stroke="#2b1a0d" stroke-width="2.5" stroke-linecap="round"/>`;
+  if (own.indexOf("hat")>-1) b += `<path d="M28 28 q32 -22 64 0 q-14 -4 -32 -4 q-18 0 -32 4 Z" fill="#2b1a0d"/>
+        <path d="M22 30 q38 12 76 0 q-6 -12 -38 -12 q-32 0 -38 12 Z" fill="#2b1a0d"/>
+        <circle cx="60" cy="22" r="5" fill="#efdfbb"/>`;
+  if (own.indexOf("parrot")>-1) b += `<ellipse cx="98" cy="72" rx="12" ry="16" fill="#3fb8a0" stroke="#2b1a0d" stroke-width="2"/>
+        <circle cx="98" cy="58" r="8" fill="#d2553c" stroke="#2b1a0d" stroke-width="2"/><circle cx="100" cy="56" r="2" fill="#2b1a0d"/>
+        <path d="M105 58 l7 3 l-7 3 Z" fill="#e0a828"/>`;
+  if (own.indexOf("spy")>-1) b += `<rect x="12" y="74" width="30" height="9" rx="3" fill="#e0a828" stroke="#2b1a0d" stroke-width="2" transform="rotate(-18 27 78)"/>`;
+  return `<svg viewBox="0 0 120 130" width="${size||120}" height="${(size||120)*1.08}" xmlns="http://www.w3.org/2000/svg">${b}</svg>`;
+}
+
+/* ============================================================
+   SECTION: TEXT (EN / AF)
+   ============================================================ */
+const T = {
+  titleMain:{en:"The Secret of Baboon Island",af:"Die Geheim van Baviaaneiland"},
+  titleSub:{en:"A Mathematics adventure for Grade 6",af:"'n Wiskunde-avontuur vir Graad 6"},
+  nameLabel:{en:"What is your pirate name?",af:"Wat is jou seerowersnaam?"},
+  start:{en:"Begin the adventure",af:"Begin die avontuur"},
+  foot:{en:"80 questions · CAPS Grade 6 · Afrikaans & English",af:"80 vrae · KABV Graad 6 · Afrikaans & English"},
+  mapHead:{en:"The chart",af:"Die kaart"},
+  cabin:{en:"Your cabin",af:"Jou kajuit"},
+  teacher:{en:"For the teacher",af:"Vir die onderwyser"},
+  cert:{en:"Certificate",af:"Sertifikaat"},
+  locked:{en:"Locked",af:"Gesluit"},
+  enter:{en:"Go ashore",af:"Gaan aan wal"},
+  back:{en:"Back to the chart",af:"Terug na die kaart"},
+  begin:{en:"Start the questions",af:"Begin die vrae"},
+  hint:{en:"Hint",af:"Wenk"},
+  showMe:{en:"Show me how",af:"Wys my hoe"},
+  next:{en:"Next",af:"Volgende"},
+  right:{en:"Correct!",af:"Korrek!"},
+  wrong1:{en:"Not yet — try once more.",af:"Nog nie — probeer nog 'n keer."},
+  wrong2:{en:"Not this time.",af:"Nie hierdie keer nie."},
+  method:{en:"How it works",af:"Hoe dit werk"},
+  q:{en:"Question",af:"Vraag"},
+  of:{en:"of",af:"van"},
+  chapDone:{en:"Chapter complete",af:"Hoofstuk voltooi"},
+  firstTry:{en:"right first time",af:"eerste keer reg"},
+  again:{en:"Play again",af:"Speel weer"},
+  lostAll:{en:"The crew has thrown you back to the ship. Nothing is lost — your progress is safe. Try the chapter again.",
+           af:"Die bemanning het jou terug skip toe gegooi. Niks is verloor nie — jou vordering is veilig. Probeer die hoofstuk weer."},
+  duelName:{en:"Captain Scurvybeard",af:"Kaptein Skurwebaard"},
+  you:{en:"You",af:"Jy"},
+  duelIntro:{en:"Twelve questions, and the Captain fights back every time you slip. Answer well and the island is yours.",
+             af:"Twaalf vrae, en die Kaptein slaan terug elke keer as jy gly. Antwoord goed en die eiland is joune."},
+  duelWin:{en:"Scurvybeard drops his cutlass and hands over the map. Baboon Island is yours.",
+           af:"Skurwebaard laat sy kortswaard val en oorhandig die kaart. Baviaaneiland is joune."},
+  duelLose:{en:"He wins this round — but he has to fight you again tomorrow, and you know his tricks now.",
+            af:"Hy wen hierdie rondte — maar hy moet jou môre weer veg, en jy ken nou sy truuks."},
+  duelLocked:{en:"Finish all six chapters before you face the Captain.",af:"Voltooi al ses hoofstukke voor jy die Kaptein trotseer."},
+  coins:{en:"doubloons",af:"dubloene"},
+  buy:{en:"Buy",af:"Koop"},
+  owned:{en:"Owned",af:"Joune"},
+  cantAfford:{en:"Not enough doubloons yet.",af:"Nog nie genoeg dubloene nie."},
+  reset:{en:"Reset all progress",af:"Herstel alle vordering"},
+  resetAsk:{en:"Erase all progress for this player?",af:"Wis alle vordering vir hierdie speler uit?"},
+  print:{en:"Print",af:"Druk"},
+  attempted:{en:"Answered",af:"Beantwoord"},
+  correct1:{en:"Right first time",af:"Eerste keer reg"},
+  area:{en:"CAPS content area",af:"KABV-inhoudsarea"},
+  allQ:{en:"Every question in the game",af:"Elke vraag in die speletjie"},
+  noData:{en:"No questions answered yet.",af:"Nog geen vrae beantwoord nie."},
+  certTitle:{en:"Certificate of Seamanship",af:"Sertifikaat van Seemanskap"},
+  certLine:{en:"has sailed the Mathematics route of Baboon Island",af:"het die Wiskunde-roete van Baviaaneiland gevaar"},
+  total:{en:"Total",af:"Totaal"},
+  saveFail:{en:"Progress cannot be saved in this browser, but the game will still work.",
+            af:"Vordering kan nie in hierdie blaaier gestoor word nie, maar die speletjie werk steeds."},
+  skip:{en:"Skip intro · ESC",af:"Slaan oor · ESC"},
+  settings:{en:"Settings",af:"Instellings"},
+  hintsOn:{en:"Hints: on",af:"Wenke: aan"},
+  hintsOff:{en:"Hints: off",af:"Wenke: af"},
+  hintsNote:{en:"With hints off, a first wrong answer only says “think again”. Use this once learners guess too quickly.",
+             af:"Met wenke af sê 'n eerste verkeerde antwoord net “dink weer”. Gebruik dit wanneer leerders te vinnig raai."},
+  soundOn:{en:"Sound: on",af:"Klank: aan"},
+  soundOff:{en:"Sound: off",af:"Klank: af"},
+  thinkAgain:{en:"Think it through and try once more.",af:"Dink mooi en probeer nog 'n keer."},
+  badges:{en:"Awards",af:"Toekennings"},
+  newBadge:{en:"New award:",af:"Nuwe toekenning:"},
+  progress:{en:"Progress",af:"Vordering"},
+  stars:{en:"stars",af:"sterre"},
+  teacherLock:{en:"Teacher access",af:"Toegang vir die opvoeder"},
+  teacherAsk:{en:"Enter the teacher code to open the diagnostic panel.",
+              af:"Voer die opvoederkode in om die diagnostiese paneel oop te maak."},
+  unlock:{en:"Unlock",af:"Sluit oop"},
+  cancel:{en:"Cancel",af:"Kanselleer"},
+  wrongCode:{en:"That code is not correct.",af:"Daardie kode is nie korrek nie."},
+  waitCode:{en:"Too many attempts. Wait a few seconds.",af:"Te veel pogings. Wag 'n paar sekondes."},
+  logout:{en:"Log out of teacher mode",af:"Teken uit uit opvoedermodus"},
+  loggedOut:{en:"Teacher mode closed.",af:"Opvoedermodus gesluit."},
+  notes:{en:"Notes for the educator",af:"Notas vir die opvoeder"},
+  download:{en:"Download summary (CSV)",af:"Laai opsomming af (CSV)"},
+  answered:{en:"Questions answered",af:"Vrae beantwoord"}
+};
+const t = k => T[k][S.lang];
+
+/* ============================================================
+   SECTION: GAME STATE & STORAGE
+   ============================================================ */
+let S = {
+  lang:"af", name:"", coins:0, lives:3, streak:0, best:0,
+  unlocked:[0], stars:{}, own:[], hist:{}, duelWon:false, sound:false,
+  hints:true, badges:[], earned:0, answered:0
+};
+let storageOK = true;
+
+function save() {
+  try { localStorage.setItem("baviaaneiland:" + S.name.toLowerCase(), JSON.stringify(S)); }
+  catch (e) { storageOK = false; }
+}
+function load(name) {
+  try {
+    const raw = localStorage.getItem("baviaaneiland:" + name.toLowerCase());
+    if (raw) {
+      const d = JSON.parse(raw); Object.keys(d).forEach(k => S[k] = d[k]);
+      S.badges = S.badges || []; S.earned = S.earned || 0; S.answered = S.answered || 0;
+      if (S.hints === undefined) S.hints = true;
+      return true;
+    }
+  } catch (e) { storageOK = false; }
+  return false;
+}
+
+/* ============================================================
+   SECTION: SOUND (Web Audio only — no files)
+   ============================================================ */
+let actx = null;
+function beep(freq, dur, type) {
+  if (!S.sound) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type || "triangle"; o.frequency.value = freq;
+    g.gain.setValueAtTime(.09, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + dur);
+    o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + dur);
+  } catch (e) {}
+}
+function toggleSound() {
+  S.sound = !S.sound;
+  document.getElementById("btn-sound").textContent = S.sound ? "🔊" : "🔇";
+  if (S.sound) beep(660, .12);
+  save();
+}
+
+/* ============================================================
+   SECTION: RENDERING HELPERS
+   ============================================================ */
+const $ = id => document.getElementById(id);
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("on"));
+  const el = $(id);
+  el.classList.add("on");
+  el.style.opacity = "0";
+  const paint = () => { el.style.transition = "opacity .22s ease"; el.style.opacity = "1"; };
+  if (window.requestAnimationFrame) requestAnimationFrame(paint); else setTimeout(paint, 16);
+  window.scrollTo(0, 0);
+}
+function toast(msg) {
+  const d = document.createElement("div");
+  d.className = "toast"; d.textContent = msg; document.body.appendChild(d);
+  setTimeout(() => d.remove(), 2600);
+}
+function say(el, who, text) {
+  $(el).innerHTML = (who ? `<span class="who">${who}</span>` : "") + text;
+}
+function topbar() {
+  $("tb-player").textContent = S.name;
+  $("tb-coins").innerHTML = "🪙 <b>" + S.coins + "</b>";
+  $("tb-streak").innerHTML = "🔥 <b>" + S.streak + "</b>";
+  $("tb-lives").textContent = "💀".repeat(Math.max(0, S.lives)) + "·".repeat(Math.max(0, 3 - S.lives));
+  $("btn-lang").textContent = S.lang === "af" ? "EN" : "AF";
+  $("btn-sound").textContent = S.sound ? "🔊" : "🔇";
+}
+
+function toggleLang() {
+  S.lang = S.lang === "af" ? "en" : "af";
+  document.documentElement.lang = S.lang;
+  $("t-main").textContent = T.titleMain[S.lang];
+  $("t-sub").textContent = T.titleSub[S.lang];
+  $("t-namelabel").textContent = T.nameLabel[S.lang];
+  $("t-start").textContent = T.start[S.lang];
+  $("t-foot").textContent = T.foot[S.lang];
+  $("t-lang").textContent = S.lang === "af" ? "English" : "Afrikaans";
+  $("m-head").textContent = T.mapHead[S.lang];
+  $("m-cabin").textContent = T.cabin[S.lang];
+  $("m-teacher").textContent = T.teacher[S.lang];
+  $("m-cert").textContent = T.cert[S.lang];
+  $("m-set").textContent = T.settings[S.lang];
+  $("btn-skip").textContent = T.skip[S.lang];
+  $("m-teacher").textContent = T.teacher[S.lang] + " 🔒";
+  $("q-hint").textContent = T.hint[S.lang];
+  $("q-show").textContent = T.showMe[S.lang];
+  $("q-next").textContent = T.next[S.lang];
+  $("hp-you-lbl").textContent = T.you[S.lang];
+  $("hp-foe-lbl").textContent = T.duelName[S.lang];
+  topbar();
+  if ($("scr-map").classList.contains("on")) renderMap();
+  if ($("scr-q").classList.contains("on") && current) renderQuestion();
+  save();
+}
+
+/* ============================================================
+   SECTION: START
+   ============================================================ */
+function startGame() {
+  const n = ($("nameIn").value || "").trim();
+  S.name = n || (S.lang === "af" ? "Matroos" : "Sailor");
+  load(S.name);
+  document.documentElement.lang = S.lang;
+  $("topbar").style.display = "flex";
+  if (!storageOK) toast(t("saveFail"));
+  topbar(); goMap();
+}
+
+/* ============================================================
+   SECTION: MAP
+   ============================================================ */
+function goMap() {
+  current = null;
+  S.lives = 3; topbar();
+  renderMap(); show("scr-map");
+}
+function chapterQuestions(ch) {
+  const out = [];
+  QUESTION_BANK.forEach((q, i) => { if (q.ch === ch) out.push(i); });
+  return out;
+}
+function starsFor(ch) { return S.stars[ch] || 0; }
+
+function renderMap() {
+  $("map-scene").innerHTML = scene(SKY + `<rect width="640" height="210" fill="url(#night)"/>${moon(566,40,24)}
+    <rect y="140" width="640" height="70" fill="#0b3243"/>${waves(152)}${waves(184)}
+    <path d="M40 150 q60 -46 130 -16 q54 22 106 12 Z" fill="#1d5a4a"/>
+    <path d="M330 156 q70 -54 150 -18 q50 22 100 10 Z" fill="#1d5a4a"/>
+    ${palm(110,142,.8)}${palm(430,146,.9)}${ship(268,138,.6)}`);
+  const done = CHAPTERS.filter((c, i) => starsFor(i) > 0).length;
+  say("map-talk", S.name,
+    S.lang === "af"
+      ? (S.duelWon ? "Die eiland is joune. Vaar gerus weer uit — die vrae skommel elke keer."
+        : done === 0 ? "Sewe plekke, een skat. Begin by die hawe." :
+          done < CHAPTERS.length ? "Nog " + (CHAPTERS.length - done) + " plek(ke) om te verower voor die duel." :
+          "Al sewe gedoen. Kaptein Skurwebaard wag by die duel.")
+      : (S.duelWon ? "The island is yours. Sail it again — the questions shuffle every time."
+        : done === 0 ? "Seven places, one treasure. Start at the docks." :
+          done < CHAPTERS.length ? (CHAPTERS.length - done) + " more place(s) to win before the duel." :
+          "All seven done. Captain Scurvybeard is waiting."));
+
+  const g = $("map-grid"); g.innerHTML = "";
+  let pb = $("map-progress");
+  if (!pb) { pb = document.createElement("div"); pb.id = "map-progress"; g.parentNode.insertBefore(pb, g); }
+  const got = CHAPTERS.map((c, i) => starsFor(i)).reduce((a, b) => a + b, 0), max = CHAPTERS.length * 3;
+  pb.innerHTML = `<div class="note">${t("progress")}: ${got}/${max} ${t("stars")} · ${S.answered || 0} ${t("answered")}</div>
+    <div class="bar"><i style="width:${Math.round(got / max * 100)}%"></i></div>`;
+  CHAPTERS.forEach((c, i) => {
+    const open = S.unlocked.indexOf(i) > -1;
+    const st = starsFor(i);
+    const b = document.createElement("button");
+    b.className = "island" + (open ? "" : " locked") + (st ? " done" : "");
+    b.innerHTML = `<div class="island-icon">${c.icon}</div>
+      <div><h3>${c.name[S.lang]}</h3><p>${c.blurb[S.lang]} · ${chapterQuestions(i).length} ${S.lang === "af" ? "vrae" : "questions"}</p>
+      <div class="stars">${open ? "★".repeat(st) + "☆".repeat(3 - st) : "🔒 " + t("locked")}</div></div>`;
+    if (open) b.onclick = () => openChapter(i); else b.disabled = true;
+    g.appendChild(b);
+  });
+  // duel tile
+  const allDone = CHAPTERS.every((c, i) => starsFor(i) > 0);
+  const d = document.createElement("button");
+  d.className = "island" + (allDone ? "" : " locked");
+  d.innerHTML = `<div class="island-icon"><svg viewBox="0 0 52 52"><path d="M10 42 L38 12" stroke="#e0a828" stroke-width="5"/><path d="M42 40 L16 12" stroke="#d2553c" stroke-width="5"/></svg></div>
+    <div><h3>${t("duelName")}</h3><p>${S.lang === "af" ? "Die laaste duel · 12 gemengde vrae" : "The final duel · 12 mixed questions"}</p>
+    <div class="stars">${allDone ? (S.duelWon ? "★★★" : "⚔️") : "🔒 " + t("locked")}</div></div>`;
+  if (allDone) d.onclick = startDuel; else { d.disabled = true; }
+  g.appendChild(d);
+  topbar();
+}
+
+/* ============================================================
+   SECTION: CHAPTER INTRO
+   ============================================================ */
+let current = null;   // {ch, list, pos, tries, duel, hpYou, hpFoe, firstRight}
+
+function openChapter(ch) {
+  const c = CHAPTERS[ch];
+  $("ch-scene").innerHTML = c.scene();
+  say("ch-talk", c.name[S.lang], c.talk[S.lang]);
+  const qs = chapterQuestions(ch);
+  $("ch-panel").innerHTML = `<h2 class="head">${c.name[S.lang]}</h2>
+    <p class="note">${AREA_NAME[c.area][S.lang]} · ${qs.length} ${S.lang === "af" ? "vrae" : "questions"} · 💀💀💀</p>
+    <div class="qbar"><button class="btn" id="go">${t("begin")}</button>
+    <button class="btn quiet" onclick="goMap()">${t("back")}</button></div>`;
+  $("go").onclick = () => beginChapter(ch);
+  show("scr-chapter");
+}
+
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function beginChapter(ch) {
+  S.lives = 3;
+  current = { ch:ch, list:shuffle(chapterQuestions(ch)), pos:0, tries:0, duel:false, firstRight:0 };
+  $("duel-ui").style.display = "none";
+  topbar(); renderQuestion(); show("scr-q");
+}
+
+/* ============================================================
+   SECTION: QUESTIONS
+   ============================================================ */
+let shownOrder = [], lastPos = [];
+
+function renderQuestion() {
+  const qi = current.list[current.pos], q = QUESTION_BANK[qi];
+  const lang = S.lang;
+  $("q-meta").textContent = `${t("q")} ${current.pos + 1} ${t("of")} ${current.list.length} · ${AREA_NAME[q.a][lang]}`;
+  $("q-text").innerHTML = lang === "af" ? q.qAf : q.q;
+  const figHost = $("q-fig");
+  figHost.innerHTML = q.fig || "";
+  if (q.fig) { figHost.setAttribute("role", "img");
+    figHost.setAttribute("aria-label", (lang === "af" ? q.faAf : q.fa) || ""); }
+  else { figHost.removeAttribute("role"); figHost.removeAttribute("aria-label"); }
+
+  // Options whose text IS the figure label (A, B, C, D / 1, 2, 3, 4) keep their
+  // printed order so the button always matches the picture. Everything else is
+  // shuffled, and the correct position may not repeat more than twice in a row.
+  const opts = (lang === "af" ? q.oAf : q.o).map((txt, i) => ({ txt:txt, ok:i === q.ci }));
+  if (!q.nosh) {
+    let guard = 0;
+    do { shuffle(opts); guard++; }
+    while (guard < 25 && lastPos.length >= 2 &&
+           lastPos[lastPos.length - 1] === opts.findIndex(o => o.ok) &&
+           lastPos[lastPos.length - 2] === opts.findIndex(o => o.ok));
+    lastPos.push(opts.findIndex(o => o.ok)); if (lastPos.length > 6) lastPos.shift();
+  }
+  shownOrder = opts;
+
+  const box = $("q-opts"); box.innerHTML = "";
+  const letters = ["A", "B", "C", "D", "E"];
+  opts.forEach((o, i) => {
+    const b = document.createElement("button");
+    b.className = "opt" + (q.nosh ? " pick" : ""); b.type = "button";
+    b.innerHTML = q.nosh
+      ? `<span class="letter">${o.txt}</span>`
+      : `<span class="letter">${letters[i]}</span><span>${o.txt}</span>`;
+    b.setAttribute("aria-label", (q.nosh ? "" : letters[i] + ". ") + String(o.txt).replace(/<[^>]+>/g, " "));
+    b.onclick = () => answer(i, b);
+    box.appendChild(b);
+  });
+  $("q-verdict").innerHTML = "";
+  $("q-next").style.display = "none";
+  $("q-hint").disabled = false; $("q-show").disabled = false;
+  $("q-hint").style.display = S.hints ? "inline-block" : "none";
+  current.tries = 0;
+  topbar();
+}
+
+function lockOptions(revealCorrect) {
+  [...$("q-opts").children].forEach((b, i) => {
+    b.disabled = true;
+    if (revealCorrect && shownOrder[i].ok) b.classList.add("right");
+  });
+}
+
+function answer(i, btn) {
+  const qi = current.list[current.pos], q = QUESTION_BANK[qi];
+  const h = S.hist[qi] = S.hist[qi] || { seen:0, first:false, wrong:0 };
+  if (shownOrder[i].ok) {
+    btn.classList.add("right");
+    lockOptions(false);
+    h.seen++;
+    if (current.tries === 0) { h.first = true; current.firstRight++; S.coins += 5; S.earned += 5; S.streak++; }
+    else { S.coins += 2; S.earned += 2; S.streak = 0; }
+    S.answered++;
+    if (S.streak > S.best) S.best = S.streak;
+    beep(880, .12); if (S.streak && S.streak % 3 === 0) beep(1180, .18);
+    verdict("good", "✔ " + t("right") + (current.tries === 0 ? " +5 🪙" : " +2 🪙"), S.lang === "af" ? q.exAf : q.ex);
+    if (current.duel) { current.hpFoe -= 9; drawHP(); }
+    finishQuestion();
+  } else {
+    btn.classList.add("wrong");
+    current.tries++; h.wrong++; S.streak = 0;
+    beep(200, .2, "square");
+    if (current.tries === 1) {
+      verdict("hint", "✘ " + t("wrong1"),
+        S.hints ? ((S.lang === "af" ? q.hiAf : q.hi) || "") : t("thinkAgain"));
+      btn.disabled = true;
+      if (current.duel) { current.hpYou -= 7; drawHP(); if (current.hpYou <= 0) return endDuel(false); }
+    } else {
+      lockOptions(true);
+      S.lives--;
+      verdict("bad", "✘ " + t("wrong2"), (S.lang === "af" ? q.exAf : q.ex));
+      if (current.duel) { current.hpYou -= 7; drawHP(); if (current.hpYou <= 0) return endDuel(false); }
+      finishQuestion();
+      if (!current.duel && S.lives <= 0) { $("q-next").onclick = chapterFailed; }
+    }
+  }
+  topbar(); checkBadges(); save();
+}
+
+function finishQuestion() {
+  $("q-hint").disabled = true; $("q-show").disabled = true;
+  $("q-next").style.display = "inline-block";
+  $("q-next").onclick = nextQuestion;
+  $("q-next").focus();
+}
+
+function verdict(kind, head, body) {
+  $("q-verdict").innerHTML = `<div class="verdict ${kind}"><span class="vhead">${head}</span>${body}</div>`;
+}
+
+function askHint() {
+  const q = QUESTION_BANK[current.list[current.pos]];
+  verdict("hint", "💡 " + t("hint"), (S.lang === "af" ? q.hiAf : q.hi) || (S.lang === "af" ? q.exAf : q.ex) || "");
+  $("q-hint").disabled = true;
+}
+function showMethod() {
+  const q = QUESTION_BANK[current.list[current.pos]];
+  verdict("hint", "📜 " + t("method"), (S.lang === "af" ? q.exAf : q.ex) || "");
+  $("q-show").disabled = true;
+}
+
+function nextQuestion() {
+  if (current.duel && current.hpFoe <= 0) return endDuel(true);
+  if (!current.duel && S.lives <= 0) return chapterFailed();
+  current.pos++;
+  if (current.pos >= current.list.length) return current.duel ? endDuel(current.hpFoe <= 0 || current.hpYou > current.hpFoe) : chapterDone();
+  renderQuestion();
+}
+
+function chapterFailed() {
+  $("ch-scene").innerHTML = CHAPTERS[current.ch].scene();
+  say("ch-talk", CHAPTERS[current.ch].name[S.lang], t("lostAll"));
+  $("ch-panel").innerHTML = `<h2 class="head">${CHAPTERS[current.ch].name[S.lang]}</h2>
+    <div class="qbar"><button class="btn" onclick="beginChapter(${current.ch})">${t("again")}</button>
+    <button class="btn quiet" onclick="goMap()">${t("back")}</button></div>`;
+  show("scr-chapter");
+}
+
+function chapterDone() {
+  const ch = current.ch, n = current.list.length, right = current.firstRight;
+  const pct = right / n;
+  const st = pct >= .9 ? 3 : pct >= .7 ? 2 : 1;
+  if (st > starsFor(ch)) S.stars[ch] = st;
+  if (S.unlocked.indexOf(ch + 1) === -1 && ch + 1 < CHAPTERS.length) S.unlocked.push(ch + 1);
+  S.coins += 10 * st; S.earned += 10 * st;
+  checkBadges(); save();
+  $("ch-scene").innerHTML = CHAPTERS[ch].scene();
+  say("ch-talk", CHAPTERS[ch].name[S.lang],
+    (S.lang === "af" ? "Goed gedoen. Die pad na die volgende plek is oop." : "Well done. The road to the next place is open."));
+  $("ch-panel").innerHTML = `<h2 class="head">${t("chapDone")}</h2>
+    <p style="font-size:30px;color:var(--brass);margin:4px 0">${"★".repeat(st)}${"☆".repeat(3 - st)}</p>
+    <p>${right} ${t("of")} ${n} ${t("firstTry")} · +${10 * st} 🪙</p>
+    <div class="qbar"><button class="btn" onclick="goMap()">${t("back")}</button>
+    <button class="btn quiet" onclick="beginChapter(${ch})">${t("again")}</button></div>`;
+  beep(700, .12); setTimeout(() => beep(900, .16), 130);
+  show("scr-chapter");
+}
+
+/* ============================================================
+   SECTION: THE DUEL
+   ============================================================ */
+const TAUNTS = {
+  af:["Jy tel op jou vingers — ek tel jou skatte!",
+      "My papegaai kan vinniger deel as jy!",
+      "Jou breuke is so onvereenvoudig soos jou maniere!",
+      "Ek het al skulpe gesien wat beter afrond as jy!",
+      "Jou desimale komma lê skeef, matroos!",
+      "Noem jy dít 'n gemiddelde spoed?"],
+  en:["You count on your fingers — I count your treasure!",
+      "My parrot divides faster than you do!",
+      "Your fractions are as unsimplified as your manners!",
+      "I have seen seashells round off better than you!",
+      "Your decimal comma is leaning, sailor!",
+      "You call that an average speed?"]
+};
+
+function startDuel() {
+  // pick 12: favour questions the learner got wrong or has not seen
+  const weak = [], rest = [];
+  QUESTION_BANK.forEach((q, i) => {
+    const h = S.hist[i];
+    ((!h || !h.first) ? weak : rest).push(i);
+  });
+  const list = shuffle(weak).slice(0, 12);
+  while (list.length < 12) { const r = shuffle(rest).pop(); if (r === undefined) break; if (list.indexOf(r) === -1) list.push(r); }
+  current = { ch:-1, list:shuffle(list), pos:0, tries:0, duel:true, hpYou:100, hpFoe:100, firstRight:0 };
+  $("duel-ui").style.display = "block";
+  $("hp-you-lbl").textContent = t("you"); $("hp-foe-lbl").textContent = t("duelName");
+  drawHP(); renderQuestion(); show("scr-q");
+}
+function drawHP() {
+  $("hp-you").style.width = Math.max(0, current.hpYou) + "%";
+  $("hp-foe").style.width = Math.max(0, current.hpFoe) + "%";
+  const list = TAUNTS[S.lang];
+  $("duel-taunt").textContent = "“" + list[current.pos % list.length] + "”";
+}
+function endDuel(won) {
+  if (won) { S.duelWon = true; S.coins += 100; S.earned += 100; }
+  checkBadges(); save();
+  $("ch-scene").innerHTML = CHAPTERS[6].scene();
+  say("ch-talk", t("duelName"), won ? t("duelWin") : t("duelLose"));
+  $("ch-panel").innerHTML = `<h2 class="head">${won ? "🏴‍☠️ " + t("duelWin") : t("duelLose")}</h2>
+    <div class="qbar"><button class="btn" onclick="goMap()">${t("back")}</button>
+    ${won ? `<button class="btn quiet" onclick="showCert()">${t("cert")}</button>` : `<button class="btn quiet" onclick="startDuel()">${t("again")}</button>`}</div>`;
+  $("duel-ui").style.display = "none";
+  show("scr-chapter");
+}
+
+/* ============================================================
+   SECTION: CABIN (shop)
+   ============================================================ */
+function showCabin() {
+  let items = SHOP.map(it => {
+    const has = S.own.indexOf(it.id) > -1;
+    return `<div class="shop-item">${avatarSVG([it.id], 64)}<h4>${it.name[S.lang]}</h4>
+      ${has ? `<div class="owned">✔ ${t("owned")}</div>`
+            : `<button class="btn small" onclick="buy('${it.id}')">${t("buy")} · ${it.cost} 🪙</button>`}</div>`;
+  }).join("");
+  $("info-body").innerHTML = `<h2 class="head">${t("cabin")}</h2>
+    <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+      <div>${avatarSVG(S.own, 130)}</div>
+      <div><p style="margin:0"><b>${S.name}</b></p>
+      <p class="note" style="margin:4px 0">🪙 ${S.coins} ${t("coins")} · 🔥 ${S.best}</p></div></div>
+    <h3 class="sub">${S.lang === "af" ? "Te koop" : "For sale"}</h3>
+    <div class="shop-grid">${items}</div>
+    <h3 class="sub">${t("badges")}</h3>
+    ${badgeGrid()}
+    <div class="qbar" style="margin-top:14px"><button class="btn quiet" onclick="goMap()">${t("back")}</button></div>`;
+  show("scr-info");
+}
+function buy(id) {
+  const it = SHOP.find(x => x.id === id);
+  if (S.coins < it.cost) return toast(t("cantAfford"));
+  S.coins -= it.cost; S.own.push(id); beep(1040, .15); save(); topbar(); showCabin();
+}
+
+/* ============================================================
+   SECTION: TEACHER PANEL
+   ============================================================ */
+function renderTeacher() {
+  if (!teacherUnlocked()) return goMap();
+  const areas = {};
+  QUESTION_BANK.forEach((q, i) => {
+    const a = areas[q.a] = areas[q.a] || { n:0, seen:0, first:0 };
+    a.n++;
+    const h = S.hist[i]; if (h) { a.seen++; if (h.first) a.first++; }
+  });
+  let rows = "", tn = 0, ts = 0, tf = 0;
+  Object.keys(AREA_NAME).forEach(k => {
+    const a = areas[k]; if (!a) return;
+    tn += a.n; ts += a.seen; tf += a.first;
+    rows += `<tr><td>${AREA_NAME[k][S.lang]}</td><td>${a.n}</td><td>${a.seen}</td>
+      <td>${a.seen ? Math.round(a.first / a.seen * 100) + "%" : "—"}</td></tr>`;
+  });
+  rows += `<tr><th>${t("total")}</th><th>${tn}</th><th>${ts}</th><th>${ts ? Math.round(tf / ts * 100) + "%" : "—"}</th></tr>`;
+
+  let qrows = "";
+  QUESTION_BANK.forEach((q, i) => {
+    const h = S.hist[i];
+    const ans = (S.lang === "af" ? q.oAf : q.o)[q.ci];
+    qrows += `<tr><td>${i + 1}</td><td>${q.a}</td><td>${CHAPTERS[q.ch].name[S.lang]}</td>
+      <td>${(S.lang === "af" ? q.qAf : q.q).replace(/<br>/g, " ").replace(/<[^>]+>/g, "")}</td>
+      <td><b>${ans}</b></td><td>${h ? (h.first ? "✔" : "✘ ×" + h.wrong) : "—"}</td></tr>`;
+  });
+
+  $("info-body").innerHTML = `<h2 class="head">${t("teacher")}</h2>
+    <p class="note">${S.name} · ${S.lang === "af" ? "Sterre" : "Stars"}: ${CHAPTERS.map((c, i) => starsFor(i)).reduce((a, b) => a + b, 0)}/${CHAPTERS.length * 3}</p>
+    <div class="tscroll"><table><tr><th>${t("area")}</th><th>${S.lang === "af" ? "Vrae" : "Items"}</th><th>${t("attempted")}</th><th>${t("correct1")}</th></tr>${rows}</table></div>
+    <h3 class="sub">${t("allQ")}</h3>
+    <div class="qlist"><table><tr><th>#</th><th>${t("area")}</th><th>${S.lang === "af" ? "Hoofstuk" : "Chapter"}</th>
+      <th>${t("q")}</th><th>${S.lang === "af" ? "Antwoord" : "Answer"}</th><th>${S.lang === "af" ? "Hierdie speler" : "This player"}</th></tr>${qrows}</table></div>
+    <h3 class="sub">${t("notes")}</h3>
+    <ul class="note" style="line-height:1.6">${CHAPTERS.map((c, i) =>
+      `<li><b>${c.name[S.lang]}</b> — ${NOTES[i][S.lang]}</li>`).join("")}</ul>
+    <div class="qbar" style="margin-top:14px">
+      <button class="btn quiet" onclick="goMap()">${t("back")}</button>
+      <button class="btn quiet" onclick="window.print()">${t("print")}</button>
+      <button class="btn quiet" onclick="downloadCSV()">${t("download")}</button>
+      <span class="spacer"></span>
+      <button class="btn quiet" onclick="teacherLogout()">${t("logout")}</button>
+      <button class="btn quiet" onclick="resetAll()">${t("reset")}</button></div>`;
+  show("scr-info");
+}
+function resetAll() {
+  if (!teacherUnlocked()) return goMap();
+  if (!confirm(t("resetAsk"))) return;
+  const name = S.name, lang = S.lang, sound = S.sound;
+  S = { lang:lang, name:name, coins:0, lives:3, streak:0, best:0, unlocked:[0], stars:{}, own:[], hist:{},
+        duelWon:false, sound:sound, hints:S.hints, badges:[], earned:0, answered:0 };
+  save(); topbar(); goMap();
+}
+
+/* ============================================================
+   SECTION: CERTIFICATE
+   ============================================================ */
+function showCert() {
+  const areas = {};
+  QUESTION_BANK.forEach((q, i) => {
+    const a = areas[q.a] = areas[q.a] || { seen:0, first:0 };
+    const h = S.hist[i]; if (h) { a.seen++; if (h.first) a.first++; }
+  });
+  let rows = "", ts = 0, tf = 0;
+  Object.keys(AREA_NAME).forEach(k => {
+    const a = areas[k]; if (!a || !a.seen) return;
+    ts += a.seen; tf += a.first;
+    rows += `<tr><td>${AREA_NAME[k][S.lang]}</td><td>${a.first}/${a.seen}</td></tr>`;
+  });
+  const stars = CHAPTERS.map((c, i) => starsFor(i)).reduce((a, b) => a + b, 0);
+  $("info-body").innerHTML = `<div class="cert">
+      <h2>${t("certTitle")}</h2>
+      <p style="margin:0">${S.lang === "af" ? "Hiermee word bevestig dat" : "This confirms that"}</p>
+      <div class="name">${S.name}</div>
+      <p style="margin:0">${t("certLine")}</p>
+      <div style="font-size:30px;color:#a87a16;margin:10px 0">${"★".repeat(stars)}${"☆".repeat(CHAPTERS.length * 3 - stars)}</div>
+      ${rows ? `<div class="tscroll"><table><tr><th>${t("area")}</th><th>${t("correct1")}</th></tr>${rows}
+        <tr><th>${t("total")}</th><th>${tf}/${ts}</th></tr></table></div>` : `<p>${t("noData")}</p>`}
+      <p style="font-size:14px;margin-top:16px">${S.duelWon ? (S.lang === "af" ? "Oorwinnaar van die duel teen Kaptein Skurwebaard" : "Winner of the duel against Captain Scurvybeard") : ""}</p>
+      <p style="font-size:13px;margin-top:20px">____________________________<br>${S.lang === "af" ? "Onderwyser" : "Teacher"}</p>
+    </div>
+    <div class="qbar noprint" style="margin-top:14px">
+      <button class="btn quiet" onclick="goMap()">${t("back")}</button>
+      <button class="btn" onclick="window.print()">${t("print")}</button></div>`;
+  show("scr-info");
+}
+
+
+/* ============================================================
+   SECTION: INTRODUCTION SEQUENCE
+   Credits play once on load, then hand over to the title screen.
+   ESC or the Skip button ends it early.
+   ============================================================ */
+const CREDITS = {
+  eyebrow:{en:"This educational game was developed and coded by",
+           af:"Hierdie opvoedkundige speletjie is ontwikkel en gekodeer deur"},
+  people:[
+    { name:"Wesley George", role:"Senior Education Specialist: Mathematics" },
+    { name:"Riaan van der Westhuizen", role:"Senior Education Specialist: Mathematics" }
+  ],
+  ded:{en:"Dedicated to supporting quality Mathematics education through innovative digital learning experiences.",
+       af:"Opgedra aan die ondersteuning van gehalte-Wiskunde-onderwys deur innoverende digitale leerervarings."}
+};
+const SYMS = ["7","½","π","%","×","÷","3,5","√","∠","12","¾","−","24","+","cm²","2,5"];
+let introTimers = [], introDone = false;
+
+function spawnSymbols() {
+  const host = $("intro-syms"); if (!host) return;
+  let html = "";
+  for (let i = 0; i < 16; i++) {
+    const left = 3 + Math.round(Math.random() * 92);
+    const dur = 8 + Math.round(Math.random() * 7);
+    const del = -Math.round(Math.random() * 10);
+    const size = 18 + Math.round(Math.random() * 20);
+    html += `<span class="sym" style="left:${left}%;bottom:-40px;font-size:${size}px;
+      animation-duration:${dur}s;animation-delay:${del}s">${SYMS[i % SYMS.length]}</span>`;
+  }
+  host.innerHTML = html;
+}
+
+function runIntro() {
+  const box = $("intro-inner"); if (!box) return endIntro();
+  spawnSymbols();
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dwell = reduce ? 1500 : 2600;
+  const person = p => `<p class="intro-name">${p.name}</p><p class="intro-role">${p.role}</p>`;
+  const beats = [
+    `<p class="intro-eyebrow">${CREDITS.eyebrow[S.lang]}</p>
+     <div class="intro-rule"></div>
+     <p class="intro-ded">Die Geheim van Baviaaneiland<br>The Secret of Baboon Island</p>`,
+    `<p class="intro-eyebrow">${CREDITS.eyebrow[S.lang]}</p>${person(CREDITS.people[0])}`,
+    `<p class="intro-eyebrow">${CREDITS.eyebrow[S.lang]}</p>${person(CREDITS.people[1])}`,
+    `<div class="intro-rule"></div><p class="intro-ded">${CREDITS.ded[S.lang]}</p><div class="intro-rule"></div>`
+  ];
+  beats.forEach((html, i) => {
+    introTimers.push(setTimeout(() => {
+      box.innerHTML = `<div class="beat">${html}</div>`;
+      [...document.querySelectorAll(".intro-dots i")].forEach((d, k) => d.classList.toggle("on", k === i));
+    }, i * dwell));
+  });
+  introTimers.push(setTimeout(endIntro, beats.length * dwell));
+}
+
+function skipIntro() { endIntro(); }
+
+function endIntro() {
+  if (introDone) return;
+  introDone = true;
+  introTimers.forEach(clearTimeout); introTimers = [];
+  const box = $("intro-box");
+  if (box) box.classList.add("fading");
+  setTimeout(() => { show("scr-title"); const n = $("nameIn"); if (n) n.focus(); }, 420);
+}
+
+/* ============================================================
+   SECTION: TEACHER ACCESS
+   The code is checked in one place only. To move this to a server,
+   replace the body of verifyTeacherPassword() with a fetch() that
+   returns true or false — nothing else in the game needs to change.
+   ============================================================ */
+const TEACHER_PASSCODE = "5465";
+let teacherFlag = false, codeTries = 0, codeBlockUntil = 0;
+
+function verifyTeacherPassword(code) {
+  return String(code).trim() === TEACHER_PASSCODE;
+}
+function teacherUnlocked() {
+  try { if (sessionStorage.getItem("bav:teacher") === "1") return true; } catch (e) {}
+  return teacherFlag;
+}
+function teacherGrant() {
+  teacherFlag = true;
+  try { sessionStorage.setItem("bav:teacher", "1"); } catch (e) {}
+}
+function teacherLogout() {
+  teacherFlag = false;
+  try { sessionStorage.removeItem("bav:teacher"); } catch (e) {}
+  toast(t("loggedOut")); goMap();
+}
+function showTeacher() {            // the only way in
+  if (teacherUnlocked()) return renderTeacher();
+  openLock();
+}
+function openLock() {
+  $("modal-host").innerHTML = `<div class="modal-back" id="lock-back" role="dialog" aria-modal="true" aria-labelledby="lock-h">
+    <div class="modal">
+      <h3 id="lock-h">🔒 ${t("teacherLock")}</h3>
+      <p>${t("teacherAsk")}</p>
+      <input type="password" id="lock-in" inputmode="numeric" autocomplete="off" maxlength="8" aria-label="${t("teacherLock")}">
+      <p class="err" id="lock-err" role="alert"></p>
+      <div class="qbar"><button class="btn" id="lock-go">${t("unlock")}</button>
+      <button class="btn quiet" onclick="closeLock()">${t("cancel")}</button></div>
+    </div></div>`;
+  const inp = $("lock-in");
+  inp.focus();
+  $("lock-go").onclick = tryCode;
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") tryCode(); if (e.key === "Escape") closeLock(); });
+}
+function closeLock() { $("modal-host").innerHTML = ""; }
+function tryCode() {
+  if (Date.now() < codeBlockUntil) { $("lock-err").textContent = t("waitCode"); return; }
+  if (verifyTeacherPassword($("lock-in").value)) {
+    teacherGrant(); codeTries = 0; closeLock(); renderTeacher(); return;
+  }
+  codeTries++;
+  if (codeTries >= 3) { codeBlockUntil = Date.now() + 10000; codeTries = 0; $("lock-err").textContent = t("waitCode"); }
+  else $("lock-err").textContent = t("wrongCode");
+  $("lock-in").value = ""; $("lock-in").focus();
+  beep(180, .18, "square");
+}
+
+/* ============================================================
+   SECTION: AWARDS
+   ============================================================ */
+const BADGES = [
+  { id:"first", ic:"⚓", n:{en:"First landing",af:"Eerste landing"},
+    d:{en:"Finish a chapter",af:"Voltooi 'n hoofstuk"}, t:s => Object.keys(s.stars).length >= 1 },
+  { id:"three", ic:"🧭", n:{en:"Chart reader",af:"Kaartleser"},
+    d:{en:"Finish three chapters",af:"Voltooi drie hoofstukke"}, t:s => Object.keys(s.stars).length >= 3 },
+  { id:"all", ic:"🗺️", n:{en:"Every shore",af:"Elke kus"},
+    d:{en:"Finish all seven chapters",af:"Voltooi al sewe hoofstukke"}, t:s => Object.keys(s.stars).length >= 7 },
+  { id:"star3", ic:"⭐", n:{en:"Three stars",af:"Drie sterre"},
+    d:{en:"Earn three stars in a chapter",af:"Verdien drie sterre in 'n hoofstuk"},
+    t:s => Object.keys(s.stars).some(k => s.stars[k] === 3) },
+  { id:"perfect", ic:"🌟", n:{en:"Full sail",af:"Volle seil"},
+    d:{en:"Three stars in every chapter",af:"Drie sterre in elke hoofstuk"},
+    t:s => CHAPTERS.every((c, i) => s.stars[i] === 3) },
+  { id:"s5", ic:"🔥", n:{en:"Five in a row",af:"Vyf agtereen"},
+    d:{en:"Five correct in a row",af:"Vyf agtereenvolgens reg"}, t:s => s.best >= 5 },
+  { id:"s10", ic:"⚡", n:{en:"Ten in a row",af:"Tien agtereen"},
+    d:{en:"Ten correct in a row",af:"Tien agtereenvolgens reg"}, t:s => s.best >= 10 },
+  { id:"work", ic:"📚", n:{en:"Steady hand",af:"Vaste hand"},
+    d:{en:"Answer 100 questions",af:"Beantwoord 100 vrae"}, t:s => s.answered >= 100 },
+  { id:"rich", ic:"🪙", n:{en:"Full chest",af:"Vol kis"},
+    d:{en:"Earn 300 doubloons",af:"Verdien 300 dubloene"}, t:s => s.earned >= 300 },
+  { id:"duel", ic:"🏴‍☠️", n:{en:"Duel won",af:"Duel gewen"},
+    d:{en:"Beat Captain Scurvybeard",af:"Klop Kaptein Skurwebaard"}, t:s => s.duelWon }
+];
+function checkBadges() {
+  S.badges = S.badges || [];
+  BADGES.forEach(b => {
+    if (S.badges.indexOf(b.id) === -1 && b.t(S)) {
+      S.badges.push(b.id);
+      toast(b.ic + " " + t("newBadge") + " " + b.n[S.lang]);
+      beep(900, .1); setTimeout(() => beep(1240, .16), 120);
+    }
+  });
+}
+function badgeGrid() {
+  return `<div class="badges">${BADGES.map(b => {
+    const got = (S.badges || []).indexOf(b.id) > -1;
+    return `<div class="badge ${got ? "got" : "locked"}" title="${b.d[S.lang]}">
+      <div class="bi">${got ? b.ic : "🔒"}</div><div class="bn">${b.n[S.lang]}</div>
+      <div class="bn" style="font-size:11px;color:#a9c9d4">${b.d[S.lang]}</div></div>`;
+  }).join("")}</div>`;
+}
+
+/* ============================================================
+   SECTION: SETTINGS
+   ============================================================ */
+function showSettings() {
+  $("info-body").innerHTML = `<h2 class="head">${t("settings")}</h2>
+    <div class="qbar">
+      <button class="btn quiet toggle" aria-pressed="${S.hints}" onclick="toggleHints()">${S.hints ? t("hintsOn") : t("hintsOff")}</button>
+      <button class="btn quiet toggle" aria-pressed="${S.sound}" onclick="toggleSound();showSettings()">${S.sound ? t("soundOn") : t("soundOff")}</button>
+      <button class="btn quiet" onclick="toggleLang();showSettings()">${S.lang === "af" ? "English" : "Afrikaans"}</button>
+    </div>
+    <p class="note" style="margin-top:12px;max-width:44em">${t("hintsNote")}</p>
+    <div class="qbar" style="margin-top:14px"><button class="btn quiet" onclick="goMap()">${t("back")}</button></div>`;
+  show("scr-info");
+}
+function toggleHints() { S.hints = !S.hints; save(); showSettings(); }
+
+/* ============================================================
+   SECTION: NOTES FOR THE EDUCATOR  (teacher panel)
+   ============================================================ */
+const NOTES = [
+  {en:"Watch for place-value slips in long division and for learners who round to the nearest 10 when asked for the nearest 5.",
+   af:"Let op plekwaardefoute by lang deling, en op leerders wat tot die naaste 10 afrond wanneer die naaste 5 gevra word."},
+  {en:"The commonest error is lining decimal commas up incorrectly, especially where one number is a whole number.",
+   af:"Die algemeenste fout is om desimale kommas verkeerd te belyn, veral waar een getal 'n heelgetal is."},
+  {en:"Learners who add numerators and denominators will pick the distractor built on that error. Insist on a common denominator in writing.",
+   af:"Leerders wat tellers en noemers bymekaartel, sal die afleier kies wat op daardie fout gebou is. Dring aan op 'n gemene noemer op skrif."},
+  {en:"Ask for the rule to be tested on every pair in the flow diagram, not only the first one.",
+   af:"Vra dat die reël op elke paar in die vloeidiagram getoets word, nie net op die eerste een nie."},
+  {en:"Faces, edges and vertices are confused often. Let learners count on a physical box before this chapter.",
+   af:"Vlakke, ribbe en hoekpunte word dikwels verwar. Laat leerders op 'n regte doos tel voor hierdie hoofstuk."},
+  {en:"Unit conversions cause most of the errors here, not the calculation itself. Check km to m and g to kg first.",
+   af:"Eenheidherleidings veroorsaak die meeste foute hier, nie die berekening self nie. Kontroleer eers km na m en g na kg."},
+  {en:"Reading the scale is the skill being tested. Have learners say out loud what one interval is worth before answering.",
+   af:"Om die skaal te lees, is die vaardigheid wat getoets word. Laat leerders hardop sê hoeveel een interval werd is voor hulle antwoord."}
+];
+
+/* ============================================================
+   SECTION: DOWNLOADABLE SUMMARY
+   ============================================================ */
+function downloadCSV() {
+  if (!teacherUnlocked()) return;
+  const clean = x => String(x).replace(/<br>/g, " ").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+  const rows = [["No", "CAPS area", "Chapter", "Question", "Correct answer", "Result", "Wrong attempts"]];
+  QUESTION_BANK.forEach((q, i) => {
+    const h = S.hist[i];
+    rows.push([i + 1, q.a, CHAPTERS[q.ch].name[S.lang], clean(S.lang === "af" ? q.qAf : q.q),
+      clean((S.lang === "af" ? q.oAf : q.o)[q.ci]),
+      h ? (h.first ? "right first time" : "needed a second try") : "not answered", h ? h.wrong : 0]);
+  });
+  const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(",")).join("\r\n");
+  try {
+    const blob = new Blob(["\ufeff" + csv], { type:"text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "Baviaaneiland_" + S.name.replace(/\W+/g, "_") + "_" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  } catch (e) { toast("CSV ✘"); }
+}
+
+
+/* ============================================================
+   SECTION: TOUCH INPUT
+   Phones fire click about 300 ms after the finger lifts, and only
+   after a synthetic sequence. We act on touchend instead, cancel the
+   ghost click, and paint a pressed state the moment the finger lands.
+   A drag of more than 12 px counts as a scroll, not a tap.
+   ============================================================ */
+const TAPPABLE = ".btn,.opt,.island,.shop-item button";
+function touchUI() {
+  let held = null, moved = false, sx = 0, sy = 0;
+
+  const near = el => (el && el.closest) ? el.closest(TAPPABLE) : null;
+  const release = () => { if (held) held.classList.remove("pressed"); held = null; };
+
+  document.addEventListener("touchstart", e => {
+    const t = near(e.target);
+    if (!t || t.disabled) return;
+    held = t; moved = false;
+    const p = e.touches[0]; sx = p.clientX; sy = p.clientY;
+    t.classList.add("pressed");
+  }, { passive:true });
+
+  document.addEventListener("touchmove", e => {
+    if (!held || moved) return;
+    const p = e.touches[0];
+    if (Math.abs(p.clientX - sx) > 12 || Math.abs(p.clientY - sy) > 12) {
+      moved = true; held.classList.remove("pressed");
+    }
+  }, { passive:true });
+
+  document.addEventListener("touchend", e => {
+    const t = held;
+    release();
+    if (!t || moved || t.disabled) return;
+    if (near(e.target) !== t) return;          // finger slid off the control
+    if (e.cancelable) { e.preventDefault(); t.click(); }   // fire now, suppress the ghost click
+  }, { passive:false });
+
+  document.addEventListener("touchcancel", release, { passive:true });
+
+  // iOS Safari otherwise zooms on a fast double tap inside the game
+  let lastTap = 0;
+  document.addEventListener("touchend", e => {
+    const now = Date.now();
+    if (now - lastTap < 320 && near(e.target) && e.cancelable) e.preventDefault();
+    lastTap = now;
+  }, { passive:false });
+}
+
+/* ============================================================
+   SECTION: BOOT
+   ============================================================ */
+(function boot() {
+  $("title-scene").innerHTML = scene(SKY + `<rect width="640" height="210" fill="url(#night)"/>
+    ${moon(520,48,26)}
+    <circle cx="120" cy="40" r="2" fill="#f4ecd8"/><circle cx="200" cy="26" r="1.6" fill="#f4ecd8"/>
+    <circle cx="300" cy="52" r="2" fill="#f4ecd8"/><circle cx="420" cy="30" r="1.6" fill="#f4ecd8"/>
+    <rect y="146" width="640" height="64" fill="#0b3243"/>${waves(158)}${waves(188)}
+    <path d="M430 150 q70 -52 150 -16 q40 18 60 12 Z" fill="#14503f"/>${palm(500,148,1)}
+    ${ship(180,150,1.15)}`);
+  $("nameIn").addEventListener("keydown", e => { if (e.key === "Enter") startGame(); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && $("scr-intro").classList.contains("on")) return skipIntro();
+    if (!$("scr-q").classList.contains("on")) return;
+    if (e.key === "Enter" && $("q-next").style.display !== "none") return nextQuestion();
+    const n = "1234".indexOf(e.key);
+    if (n > -1 && !/input|textarea/i.test((e.target.tagName || ""))) {
+      const b = $("q-opts").children[n];
+      if (b && !b.disabled) { b.focus(); b.click(); }
+    }
+  });
+  toggleLang(); toggleLang();   // paint both languages once, ends on Afrikaans
+  touchUI();
+  runIntro();
+})();
+
+</script>
+</body>
+</html>
